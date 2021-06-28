@@ -1,0 +1,35 @@
+name: CI
+on: [push, pull_request]
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build-and-run-examples:
+    runs-on: ubuntu-18.04
+    container: teaclave/teaclave-trustzone-sdk-build:0.1.1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setting up repository
+        run: |
+          git submodule update --depth 1 --init &&
+          (cd rust/compiler-builtins && git submodule update --depth 1 --init libm) &&
+          (cd rust/rust && git submodule update --depth 1 --init src/stdsimd)
+      - name: Preparing build system
+        run: |
+          . ~/.cargo/env &&
+          . /opt/sgxsdk/environment &&
+          mkdir -p build &&
+          cd build &&
+          cmake -DCMAKE_BUILD_TYPE=Debug -DSGX_SIM_MODE=ON -DTEST_MODE=ON ..
+      - name: Building
+        run: |
+          make optee &&
+          source environment &&
+          rustup default nightly-2019-07-08 &&
+          (cd optee-utee && xargo build --target aarch64-unknown-optee-trustzone -vv) &&
+          (cd optee-teec && cargo build --target aarch64-unknown-linux-gnu -vv)
+          make examples
+      - name: Run tests and examples
+        run: |
+          cd ci && ./ci.sh
