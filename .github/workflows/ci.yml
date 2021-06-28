@@ -9,8 +9,9 @@ jobs:
     runs-on: ubuntu-18.04
     container: teaclave/teaclave-trustzone-sdk-build:0.1.1
     steps:
-      - uses: actions/checkout@v2
-      - name: Setting up repository
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Checkout submodules
         run: |
           git submodule update --depth 1 --init &&
           (cd rust/compiler-builtins && git submodule update --depth 1 --init libm) &&
