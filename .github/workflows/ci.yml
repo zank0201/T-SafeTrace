@@ -11,18 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Checkout submodules
-        run: |
-          git submodule update --depth 1 --init &&
-          (cd rust/compiler-builtins && git submodule update --depth 1 --init libm) &&
-          (cd rust/rust && git submodule update --depth 1 --init src/stdsimd)
-      - name: Preparing build system
-        run: |
-          . ~/.cargo/env &&
-          . /opt/sgxsdk/environment &&
-          mkdir -p build &&
-          cd build &&
-          cmake -DCMAKE_BUILD_TYPE=Debug -DSGX_SIM_MODE=ON -DTEST_MODE=ON ..
+        with:
+          submodules: recursive
       - name: Building
         run: |
           make optee &&
