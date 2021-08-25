@@ -1,5 +1,6 @@
 // Need to generate a random key
 // that can be authenticated with the data we have
+use optee_utee::trace_println;
 use optee_utee::{AlgorithmId, Asymmetric, OperationMode};
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use optee_utee::{TransientObject, TransientObjectType};
@@ -17,15 +18,17 @@ impl Default for RsaCipher {
     }
 }
 
-fn gen_key(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
+pub fn gen_key(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     let key_size = unsafe { params.0.as_value().unwrap().a() };
     rsa.key =
         TransientObject::allocate(TransientObjectType::RsaKeypair, key_size as usize).unwrap();
     rsa.key.generate_key(key_size as usize, &[])?;
+
     Ok(())
 }
 
-fn get_size(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
+// gets key size from generated key
+pub fn get_size(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     let key_info = rsa.key.info().unwrap();
     unsafe {
         params
@@ -37,7 +40,7 @@ fn get_size(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     Ok(())
 }
 
-fn encrypt(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
+pub fn encrypt(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     let key_info = rsa.key.info().unwrap();
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let plain_text = p0.buffer();
@@ -58,7 +61,7 @@ fn encrypt(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     }
 }
 
-fn decrypt(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
+pub fn decrypt(rsa: &mut RsaCipher, params: &mut Parameters) -> Result<()> {
     let key_info = rsa.key.info().unwrap();
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let mut cipher_text = p0.buffer();

@@ -12,13 +12,19 @@ const SIZE_K: usize = 20;
 // ];
 
 pub fn register_shared_key(session: &mut Session) -> optee_teec::Result<()> {
-    let k: [u8; SIZE_K] = [
-        0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
-        0x36, 0x37, 0x38, 0x39, 0x30,
-    ];
-    // let k: [u8; SIZE_K] = [50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 0];
 
-    let p0 = ParamTmpRef::new_input(&k);
+    // let k: [u8; SIZE_K] = [
+    //     0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x30, 0x31, 0x32, 0x33, 0x34, 0x35,
+    //     0x36, 0x37, 0x38, 0x39, 0x30,
+    // ];
+    // // let k: [u8; SIZE_K] = [50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 0];
+    //
+    // let p0 = ParamTmpRef::new_input(&k);
+    // let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);
+    //
+    // session.invoke_command(Command::RegisterSharedKey as u32, &mut operation)?;
+    let key_size :u32 = 160;
+    let p0 = ParamValue::new(key_size, 0, ParamType::ValueInput);
     let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);
 
     session.invoke_command(Command::RegisterSharedKey as u32, &mut operation)?;

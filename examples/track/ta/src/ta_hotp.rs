@@ -1,13 +1,14 @@
 // mod self;
 #![allow(unused)]
 use optee_utee::Time;
-use optee_utee::{AlgorithmId, Mac, Digest};
+use optee_utee::{AlgorithmId, Mac, Digest, Asymmetric, OperationMode};
 use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::Command;
 use optee_utee::{
     ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
 };
+
 
 use std::convert::TryInto;
 use std::iter::FromIterator;
@@ -18,6 +19,7 @@ pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
 pub const MIN_KEY_SIZE: usize = 10;
 pub const DBC2_MODULO: u32 = 100000000;
+
 
 
 pub struct HmacOtp {
@@ -59,14 +61,20 @@ pub fn get_time(hotp: &mut HmacOtp) -> [u8; 8] {
 //     return hash.to_hex();
 // }
 
-pub fn register_shared_key(hotp: &mut HmacOtp, params: &mut Parameters) -> Result<()> {
+// find a way to link the rsa key to the hotp key that we will generate
+pub fn register_shared_key(hotp: &mut HmacOtp,params: &mut Parameters) -> Result<()> {
     let mut p = unsafe { params.0.as_memref().unwrap() };
     let buffer = p.buffer();
     trace_println!("[+] buffer = {:?}",&buffer);
     hotp.key_len = buffer.len();
     // update counter value
     hotp.key[..hotp.key_len].clone_from_slice(buffer);
+    // let key_size = unsafe { params.0.as_value().unwrap().a() };
+    // hotp.rsa_key =
+    //     TransientObject::allocate(TransientObjectType::RsaKeypair, key_size as usize).unwrap();
+    // hotp.key = hotp.rsa_key.generate_key(key_size as usize, &[])?;
     Ok(())
+
 }
 
 pub fn get_hotp(hotp: &mut HmacOtp, params: &mut Parameters) -> Result<()> {
