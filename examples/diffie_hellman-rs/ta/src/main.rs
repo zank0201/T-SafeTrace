@@ -67,6 +67,7 @@ fn generate_key(dh: &mut DiffieHellman, params: &mut Parameters) -> Result<()> {
 
     // Extract prime and base from parameters
     let prime_base_vec = p0.buffer();
+    trace_println!("bugger vector {:?}", &prime_base_vec);
     let prime_slice = &prime_base_vec[..KEY_SIZE/8];
     let base_slice = &prime_base_vec[KEY_SIZE/8..];
 

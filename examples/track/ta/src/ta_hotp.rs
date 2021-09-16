@@ -14,17 +14,19 @@ use std::convert::TryInto;
 use std::iter::FromIterator;
 use std::mem::replace;
 use num_bigint::{BigInt, ToBigInt, Sign};
+
 use std::str;
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
 pub const MIN_KEY_SIZE: usize = 10;
 pub const DBC2_MODULO: u32 = 100000000;
 
-
+// Add transient object
 
 pub struct HmacOtp {
     pub counter: [u8; 8],
     pub key: [u8; MAX_KEY_SIZE],
+    pub dh_key: TransientObject,
     pub key_len: usize,
 }
 
@@ -33,6 +35,7 @@ impl Default for HmacOtp {
         Self {
             counter: [0u8; 8],
             key: [0u8; MAX_KEY_SIZE],
+            dh_key: TransientObject::null_object(),
             key_len: 0,
         }
     }
@@ -61,10 +64,12 @@ pub fn get_time(hotp: &mut HmacOtp) -> [u8; 8] {
 //     return hash.to_hex();
 // }
 
-// find a way to link the rsa key to the hotp key that we will generate
+
 pub fn register_shared_key(hotp: &mut HmacOtp,params: &mut Parameters) -> Result<()> {
     let mut p = unsafe { params.0.as_memref().unwrap() };
     let buffer = p.buffer();
+
+
     trace_println!("[+] buffer = {:?}",&buffer);
     hotp.key_len = buffer.len();
     // update counter value

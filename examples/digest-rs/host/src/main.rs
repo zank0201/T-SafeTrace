@@ -43,6 +43,7 @@ fn do_final(session: &mut Session, src: &[u8], res: &mut [u8]) -> optee_teec::Re
 
 fn main() -> optee_teec::Result<()> {
     let args: Vec<String> = env::args().collect();
+    println!("{:?}", &args);
     let args_len = args.len();
     if args_len < 2 {
         println!("Do not receive any message for digest.");

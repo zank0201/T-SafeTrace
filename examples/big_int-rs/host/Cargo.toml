@@ -28,6 +28,6 @@ edition = "2018"
 libc = "0.2.48"
 proto = { path = "../proto" }
 optee-teec = { path = "../../../optee-teec" }
-
+num-traits = "0.2"
 [profile.release]
 lto = true

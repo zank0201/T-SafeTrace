@@ -15,19 +15,11 @@
 # specific language governing permissions and limitations
 # under the License.
 
-[package]
-name = "acipher-rs"
-version = "0.1.0"
-authors = ["Teaclave Contributors <dev@teaclave.apache.org>"]
-license = "Apache-2.0"
-repository = "https://github.com/apache/incubator-teaclave-trustzone-sdk.git"
-description = "An example of Rust OP-TEE TrustZone SDK."
-edition = "2018"
+[dependencies.std]
+path = "../../../rust/rust/src/libstd"
 
-[dependencies]
-libc = "0.2.48"
-proto = { path = "../proto" }
-optee-teec = { path = "../../../optee-teec" }
-libsecp256k1 = { version = "0.6", optional = true }
-[profile.release]
-lto = true
+[patch.crates-io]
+libc =  { path = "../../../rust/libc" }
+compiler_builtins =  { path = "../../../rust/compiler-builtins" }
+rustc-std-workspace-core = { path = "../../../rust/rust/src/tools/rustc-std-workspace-core" }
+rustc-std-workspace-alloc = { path = "../../../rust/rust/src/tools/rustc-std-workspace-alloc" }
