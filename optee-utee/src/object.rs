@@ -464,15 +464,8 @@ pub enum TransientObjectType {
     /// one of the ECC curves defined in Table 6-14 with "generic" equal to
     /// "Y" is supported. SHALL be same value as for ECDH public key size
     EcdhKeypair = 0xA1000042,
-    /// 256 bits. Conditional: Available only if TEE_ECC_CURVE_25519
-    /// defined in Table 6-14 is supported.
-    Ed25519KeyPair = 0xA1000043,
-    /// 256 bits. Conditional: Available only if TEE_ECC_CURVE_25519
-    /// defined in Table 6-14 is supported.
-    Ed25519PublicKey = 0xA0000043,
     /// Multiple of 8 bits, up to 4096 bits. This type is intended for secret
     /// data that has been derived from a key derivation scheme.
-
     GenericSecret = 0xA0000000,
     /// Object is corrupted.
     CorruptedObject = 0xA00000BE,

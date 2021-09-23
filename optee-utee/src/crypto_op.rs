@@ -1742,12 +1742,7 @@ pub enum AlgorithmId {
     HmacSha384 = 0x30000005,
     /// [Mac](Mac) supported algorithm.
     HmacSha512 = 0x30000006,
-    /// [Asymmetric](Asymmetric) supported algorithm, can be applied with
-    /// [Sign](OperationMode::Sign) or [Verify](OperationMode::Verify) mode.
-    EcdsaP256 = 0x70003041,
-    /// [Asymmetric](Asymmetric) supported algorithm, can be applied with
-    /// [Sign](OperationMode::Sign) or [Verify](OperationMode::Verify) mode.
-    Ed25519 = 0x7000604,
+
     /// Reserved for GlobalPlatform compliance test applications.
     IllegalValue = 0xefffffff,
 }
@@ -1768,4 +1763,5 @@ pub enum ElementId {
     EccCurveNistP384 = 0x00000004,
     /// Source: `NIST`, Generic: `Y`, Size: 521 bits
     EccCurveNistP521 = 0x00000005,
+
 }
