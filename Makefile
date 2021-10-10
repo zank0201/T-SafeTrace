@@ -15,23 +15,25 @@
 # specific language governing permissions and limitations
 # under the License.
 
-OPTEE_PATH        ?= $(CURDIR)/optee
+OPTEE_PATH        ?= $(OPTEE_DIR)
 OPTEE_BUILD_PATH  ?= $(OPTEE_PATH)/build
 OPTEE_OS_PATH     ?= $(OPTEE_PATH)/optee_os
 OPTEE_CLIENT_PATH ?= $(OPTEE_PATH)/optee_client
-VENDOR            ?= qemu_v8.mk
 
 CCACHE ?= $(shell which ccache)
-AARCH_CROSS_COMPILE ?= $(OPTEE_PATH)/toolchains/aarch64/bin/aarch64-linux-gnu-
 
 EXAMPLES = $(wildcard examples/*)
 EXAMPLES_INSTALL = $(EXAMPLES:%=%-install)
 EXAMPLES_CLEAN  = $(EXAMPLES:%=%-clean)
 
 ifneq ($(ARCH), arm)
+	VENDOR := qemu_v8.mk
+	AARCH_CROSS_COMPILE := $(OPTEE_PATH)/toolchains/aarch64/bin/aarch64-linux-gnu-
 	HOST_TARGET := aarch64-unknown-linux-gnu
 	TA_TARGET := aarch64-unknown-optee-trustzone
 else
+	VENDOR := qemu.mk
+	ARCH_CROSS_COMPILE := $(OPTEE_PATH)/toolchains/aarch32/bin/arm-linux-gnueabihf-
 	HOST_TARGET := arm-unknown-linux-gnueabihf
 	TA_TARGET := arm-unknown-optee-trustzone
 endif
@@ -60,6 +62,9 @@ examples-install: $(EXAMPLES_INSTALL)
 $(EXAMPLES_INSTALL):
 	install -D $(@:%-install=%)/host/target/$(HOST_TARGET)/release/$(@:examples/%-install=%) -t out/host/
 	install -D $(@:%-install=%)/ta/target/$(TA_TARGET)/release/*.ta -t out/ta/
+	if [ -d "$(@:%-install=%)/plugin/target/" ]; then \
+		install -D $(@:%-install=%)/plugin/target/$(HOST_TARGET)/release/*.plugin.so -t out/plugin/; \
+	fi
 
 optee-os-clean:
 	make -C $(OPTEE_OS_PATH) O=out/arm clean
