@@ -14,7 +14,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
+#![feature(restricted_std)]
 pub use self::error::{Error, ErrorKind, Result};
 pub use self::object::*;
 pub use self::crypto_op::*;
@@ -37,5 +37,6 @@ pub mod crypto_op;
 pub mod time;
 pub mod arithmetical;
 pub mod extension;
+
 pub mod uuid;
 pub mod net;

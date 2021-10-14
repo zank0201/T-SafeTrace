@@ -14,7 +14,7 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
+#![feature(restricted_std)]
 #![allow(non_camel_case_types, non_snake_case)]
 
 pub use tee_api::*;
