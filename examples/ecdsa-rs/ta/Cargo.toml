@@ -1,0 +1,37 @@
+[package]
+name = "ta"
+version = "0.1.0"
+authors = ["Zanele <zkubheka95@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+libc = { path = "../../../rust/libc" }
+proto = { path = "../proto" }
+optee-utee-sys = { path = "../../../optee-utee/optee-utee-sys" }
+optee-utee = { path = "../../../optee-utee" }
+hex-literal = {version = "0.3.3", optional = true}
+rand_core = { version = "0.6", default-features = false }
+ecdsa = { version = "0.12", package = "ecdsa", default-features = false, optional = true }
+#elliptic-curve = { version = "0.10", default-features = false}
+p256 = {version = "0.9.0", features = ["arithmetic", "ecdh", "ecdsa", "sha256"], optional = true}
+
+[build_dependencies]
+uuid = { version = "0.8" }
+proto = { path = "../proto" }
+
+#[dependencies.p256]
+#version = "0.9.0"
+#features = ["arithmetic", "ecdh", "ecdsa", "sha256"]
+#optional = true
+
+[features]
+
+non_optee = ["hex-literal", "ecdsa", "p256"]
+
+[profile.release]
+lto = true
+opt-level = 1
+
