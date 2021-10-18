@@ -1742,6 +1742,7 @@ pub enum AlgorithmId {
     HmacSha384 = 0x30000005,
     /// [Mac](Mac) supported algorithm.
     HmacSha512 = 0x30000006,
+    EcdsaP256 = 0x70003042,
 
     /// Reserved for GlobalPlatform compliance test applications.
     IllegalValue = 0xefffffff,

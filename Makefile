@@ -24,7 +24,7 @@ VENDOR            ?= qemu_v8.mk
 CCACHE ?= $(shell which ccache)
 AARCH_CROSS_COMPILE ?= $(OPTEE_PATH)/toolchains/aarch64/bin/aarch64-linux-gnu-
 
-EXAMPLES = $(wildcard examples/hello_world-rs)
+EXAMPLES = $(wildcard examples/ecdsa-rs)
 EXAMPLES_INSTALL = $(EXAMPLES:%=%-install)
 EXAMPLES_CLEAN  = $(EXAMPLES:%=%-clean)
 

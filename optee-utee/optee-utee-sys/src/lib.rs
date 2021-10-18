@@ -16,6 +16,8 @@
 // under the License.
 #![feature(restricted_std)]
 #![allow(non_camel_case_types, non_snake_case)]
+#![feature(libc)]
+extern crate libc;
 
 pub use tee_api::*;
 pub use tee_api_defines::*;

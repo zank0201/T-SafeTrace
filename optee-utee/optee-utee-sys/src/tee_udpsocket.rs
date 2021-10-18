@@ -16,7 +16,7 @@
 // under the License.
 
 use super::*;
-use libc::*;
+use libc::{c_char, c_void};
 
 pub type TEE_udpSocket_Setup = TEE_udpSocket_Setup_s;
 #[repr(C)]

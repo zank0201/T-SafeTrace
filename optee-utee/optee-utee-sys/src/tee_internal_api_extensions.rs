@@ -16,8 +16,8 @@
 // under the License.
 
 use super::*;
-use libc::*;
 
+use libc::{c_char, c_void};
 extern "C" {
     /// tee_invoke_supp_plugin() - invoke a tee-supplicant's plugin
     /// @uuid:       uuid of the plugin

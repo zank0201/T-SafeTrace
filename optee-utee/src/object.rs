@@ -405,8 +405,7 @@ pub enum AttributeId {
     EccPrivateValue = 0xC0000341,
     /// ECC Curve algorithm
     EccCurve = 0xF0000441,
-    Ed25519PublicValue = 0xD0000743,
-    Ed25519PrivateValue = 0xC0000843,
+
     BitProtected = (1 << 28),
     BitValue = (1 << 29),
 }

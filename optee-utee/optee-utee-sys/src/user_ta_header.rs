@@ -49,7 +49,7 @@ pub fn __ta_entry(func: c_ulong, session_id: c_ulong, up: *mut utee_params, cmd_
 }
 
 unsafe impl Sync for ta_head {}
-
+pub type c_char = u8;
 pub const TA_PROP_STR_SINGLE_INSTANCE: *const c_char = "gpd.ta.singleInstance\0".as_ptr();
 pub const TA_PROP_STR_MULTI_SESSION: *const c_char = "gpd.ta.multiSession\0".as_ptr();
 pub const TA_PROP_STR_KEEP_ALIVE: *const c_char = "gpd.ta.instanceKeepAlive\0".as_ptr();
