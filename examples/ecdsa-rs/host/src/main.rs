@@ -11,26 +11,30 @@ use proto::{Command, Mode, AAD_LEN, BUFFER_SIZE, KEY_SIZE, UUID};
 /// parameters:
 /// 1) session
 /// returns private key generated from ta
-fn generate_key(session: &mut Session) -> optee_teec::Result<(Vec<u8>)> {
+fn generate_key(session: &mut Session) -> optee_teec::Result<()> {
 
     //TODO integrate edcsa from https://github.com/OP-TEE/optee_os/issues/1378
 
     // output arrays to get private and public values
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
     let mut private_key = [0u8; KEY_SIZE];
+    let mut publickey_x = [0u8; KEY_SIZE];
+    let mut publickey_y = [0u8; KEY_SIZE];
 
-    let p1 = ParamTmpRef::new_output(&mut private_key);
+    let p0 = ParamTmpRef::new_output(&mut private_key);
+    let p1 = ParamTmpRef::new_output(&mut publickey_x);
+    let p2 = ParamTmpRef::new_output(&mut publickey_y);
 //     call operation from TEE
     println!("invoking operation");
-    let mut operation = Operation::new(0, p0, p1, ParamNone, ParamNone);
+    let mut operation = Operation::new(0, p0, p1, p2,ParamNone);
     session.invoke_command(Command::GenKey as u32, &mut operation)?;
 
-    let private_size = operation.parameters().0.a() as usize;
-    let mut private_res = vec![0u8; private_size];
-    private_res.copy_from_slice(&private_key[..private_size]);
-    println!("print private key generated {:?}", &private_res.len());
+    // let publicx_size = operation.parameters().0.a() as usize;
+    // let mut public_res = vec![0u8; publicx_size];
+    // public_res.copy_from_slice(&publickey_x[..publicx_size]);
+    // println!("print public key generated {:?}", &public_res);
 
-    Ok(private_res)
+    Ok(())
 
 //
 }

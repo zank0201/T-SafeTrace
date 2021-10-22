@@ -1,8 +1,9 @@
 #![feature(restricted_std)]
 #![no_main]
 
-pub mod dethmac;
-pub use crate::dethmac::*;
+mod dethmac;
+use crate::dethmac::nistp256::Ecdsa;
+pub use dethmac::*;
 
 use optee_utee::{
     ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
@@ -34,23 +35,23 @@ use rand_core::{CryptoRng, RngCore};
 //     0x9e, 0x16, 0x2b, 0xce, 0x33, 0x57, 0x6b, 0x31, 0x5e, 0xce, 0xcb, 0xb6, 0x40, 0x68,
 //     0x37, 0xbf, 0x51, 0xf5
 // ];
-pub struct Ecdsa {
-    pub key: TransientObject,
-    pub op: Asymmetric,
-
-
-}
-
-impl Default for Ecdsa {
-    fn default() -> Self {
-        Self {
-            key: TransientObject::null_object(),
-            op: Asymmetric::null(),
-
-        }
-    }
-}
-
+// pub struct Ecdsa {
+//     pub key: TransientObject,
+//     pub op: Asymmetric,
+//
+//
+// }
+//
+// impl Default for Ecdsa {
+//     fn default() -> Self {
+//         Self {
+//             key: TransientObject::null_object(),
+//             op: Asymmetric::null(),
+//
+//         }
+//     }
+// }
+//
 
 
 #[ta_create]
@@ -112,38 +113,38 @@ fn invoke_command(sess_ctx: &mut Ecdsa, cmd_id: u32, _params: &mut Parameters) -
 /// Function to prepare edcsa and store on transisent object
 /// save to struct
 
-pub fn generate_key(ecdsa: &mut Ecdsa, params: &mut Parameters) -> Result<()> {
-    let mut p0 = unsafe { params.0.as_value().unwrap() };
-    let mut p1 = unsafe { params.1.as_memref().unwrap() };
-    trace_println!("allocating object mememory");
-    // #[cfg(feature = "non-optee")]
-
-    trace_println!("we are going to keypair");
-    // SecretKey::random(CryptoRng + RngCore);
-    ecdsa.key = TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE).unwrap();
-    // generate key pair
-
-/// generating key pair for edcsa requires the the domain Parameters
-/// ecc curve attribute
-/// generates attr of ecc gy and gx
-/// and private value
-/// get attribute using ECC curve attribute
-
-    let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
-    //generate key
-    ecdsa.key
-        .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
-    // init array of public and private keys generated
-
-    let mut private_buffer = p1.buffer();
-    let mut key_size = ecdsa
-        .key
-        .ref_attribute(AttributeId::EccPrivateValue, &mut private_buffer)
-        .unwrap();
-    p0.set_a(key_size as u32);
-
-    Ok(())
-}
+// pub fn generate_key(ecdsa: &mut Ecdsa, params: &mut Parameters) -> Result<()> {
+//     let mut p0 = unsafe { params.0.as_value().unwrap() };
+//     let mut p1 = unsafe { params.1.as_memref().unwrap() };
+//     trace_println!("allocating object mememory");
+//     // #[cfg(feature = "non-optee")]
+//
+//     trace_println!("we are going to keypair");
+//     // SecretKey::random(CryptoRng + RngCore);
+//     ecdsa.key = TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE).unwrap();
+//     // generate key pair
+//
+// /// generating key pair for edcsa requires the the domain Parameters
+// /// ecc curve attribute
+// /// generates attr of ecc gy and gx
+// /// and private value
+// /// get attribute using ECC curve attribute
+//
+//     let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
+//     //generate key
+//     ecdsa.key
+//         .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
+//     // init array of public and private keys generated
+//
+//     let mut private_buffer = p1.buffer();
+//     let mut key_size = ecdsa
+//         .key
+//         .ref_attribute(AttributeId::EccPrivateValue, &mut private_buffer)
+//         .unwrap();
+//     p0.set_a(key_size as u32);
+//
+//     Ok(())
+// }
 
 
 /// Signature generation steps
