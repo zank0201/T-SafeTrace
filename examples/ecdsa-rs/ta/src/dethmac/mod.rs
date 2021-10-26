@@ -98,6 +98,15 @@ pub fn generate_sign(ecdsa: &mut Ecdsa, params: &mut Parameters) -> Result<()> {
         sign_digest(&[], &msg_digest, &mut sign_buff);
     trace_println!("The generated signature {:?}", &sign_buff);
 
+    trace_println!("Implement verify");
+    ecdsa.op = Asymmetric::allocate(AlgorithmId::EcdsaP256, OperationMode::Verify, 256).unwrap();
+    trace_println!("set key operation");
+    ecdsa.op.set_key(&ecdsa.key)?;
+    trace_println!("verify");
+    ecdsa.op.
+        verify_digest(&[], &msg_digest, &sign_buff);
+    trace_println!("Successful verification");
+
 
     Ok(())
 }
