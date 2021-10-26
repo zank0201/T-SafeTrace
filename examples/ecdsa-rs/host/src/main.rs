@@ -44,17 +44,40 @@ fn generate_key(session: &mut Session) -> optee_teec::Result<()> {
 /// 3) calculate random point; R = k * G and take its x-cordinate: r=R.x
 /// 4) calculate signature proof: s = k^-1 * (h + r * privkey)(mod n)
 /// 5) Return signature r,s
-// fn generate_sign(session: &mut Session) -> optee_teec::Result<()> {
-//     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
-//     let mut signature = [0u8; KEY_SIZE];
+fn generate_sign(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Result<()> {
+    let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
+    let mut signature = [0u8; 64];
+
+    let p1 = ParamTmpRef::new_output(&mut signature);
+    let p2 = ParamTmpRef::new_input(&msgdigest);
+    let mut operation = Operation::new(0, p0, p1, p2, ParamNone);
+    session.invoke_command(Command::Sign as u32, &mut operation)?;
+    Ok(())
+}
+// fn verify(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Result<()> {
 //
-//     let p1 = ParamTmpRef::new_output(&mut &signature);
-//     let mut operation = Operation::new(0, p0, p1, ParamNone, ParamNone);
-//     session.invoke_command(Command::Sign as u32, &mut operation)?;
-//     Ok(())
 // }
 
-//TODO create function to derive hmac drbg
+
+// digest functions
+fn update(session: &mut Session, src: &[u8]) -> optee_teec::Result<()> {
+    let p0 = ParamTmpRef::new_input(src);
+    let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);
+
+    session.invoke_command(Command::Update as u32, &mut operation)?;
+    Ok(())
+}
+
+fn do_final(session: &mut Session, src: &[u8], res: &mut [u8]) -> optee_teec::Result<usize> {
+    let p0 = ParamTmpRef::new_input(src);
+    let p1 = ParamTmpRef::new_output(res);
+    let p2 = ParamValue::new(0, 0, ParamType::ValueOutput);
+    let mut operation = Operation::new(0, p0, p1, p2, ParamNone);
+
+    session.invoke_command(Command::DoFinal as u32, &mut operation)?;
+
+    Ok(operation.parameters().2.a() as usize)
+}
 
 
 fn main() -> optee_teec::Result<()> {
@@ -63,12 +86,21 @@ fn main() -> optee_teec::Result<()> {
 
     let uuid = Uuid::parse_str(UUID).unwrap();
     let mut session = ctx.open_session(uuid)?;
-    // empty array for generated key
-    // call funtion to generate random key
-    // let key =  random_key(&mut session).unwrap();
-    // let nonce = random_nonce(&mut session);
-    // call prepare function to initiate signing
+
     generate_key(&mut session).unwrap();
+    let mut hash: [u8; 32] = [0u8; 32];
+    let input: Vec<String> = vec!["some".to_string(), "value".to_string()];
+    for i in 0..input.len() {
+        update(&mut session, input[i].as_bytes())?;
+    }
+
+    let hash_length = do_final(&mut session, input[input.len() -1].as_bytes(), &mut hash).unwrap();
+    let mut res = hash.to_vec();
+    res.truncate(hash_length as usize);
+
+    println!("Get message hash as: {:?}.", res);
+    // call generate_sign
+    generate_sign(&mut session, &res[0..res.len()]);
 
     // generate_sign(&mut session);
     println!("Success");

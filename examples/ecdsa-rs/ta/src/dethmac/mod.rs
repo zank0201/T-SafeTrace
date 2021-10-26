@@ -10,19 +10,10 @@ use proto::{Command, Mode, BUFFER_SIZE, KEY_SIZE, TAG_LEN};
 
 
 pub mod nistp256;
-use crate::dethmac::nistp256::{Ecdsa, SecretKeys};
-use ecdsa::rfc6979::generate_k;
-use sha2::{Digest, Sha256};
-pub use {
-    p256::{AffinePoint, ProjectivePoint, Scalar},
-    core::borrow::Borrow,
-    ecdsa::hazmat::{SignPrimitive, VerifyPrimitive},
-    elliptic_curve::{generic_array::GenericArray,
-        dev::NonZeroScalar,
-        group::ff::{Field,PrimeField},
-        ops::{Invert},
-    },
-};
+
+use crate::dethmac::nistp256::{Ecdsa};
+
+
 
 /// function generating ecdsa keypairs
 /// returns scalar type of values
@@ -83,27 +74,31 @@ pub fn generate_key(ecdsa: &mut Ecdsa, params: &mut Parameters) -> Result<()> {
 
     public_y_res.copy_from_slice(&public_y_buffer[..publicy_key_size as usize]);
 
-    // convert keypairs to scalar using elliptic curve scalar
-    let private_scalar =  Scalar::from_repr(GenericArray::clone_from_slice(&private_res)).unwrap();
-    let public_x_scalar =  Scalar::from_repr(GenericArray::clone_from_slice(&public_x_res)).unwrap();
-    let public_y_scalar =  Scalar::from_repr(GenericArray::clone_from_slice(&public_y_res)).unwrap();
-    // assign new key pair values to struct
-    let SecretKeys {
-    privatekey: private_scalar,
-        public_y: public_y_scalar,
-        public_x: public_x_scalar,
-    };
 
 
     Ok(())
 }
-fn hmac_generate_k (private: &mut SecretKeys) -> Result<()> {
-    let x = NonZeroScalar::from_repr(private.privatekey
-        .into(),
-    )
-    .unwrap();
+pub fn generate_sign(ecdsa: &mut Ecdsa, params: &mut Parameters) -> Result<()> {
+    // allocate signing operation
+    let mut p0 = unsafe { params.0.as_value().unwrap() };
+    let mut p1 = unsafe { params.1.as_memref().unwrap() };
+    let mut p2 = unsafe { params.2.as_memref().unwrap() };
+    let mut sign_buff = p1.buffer();
+    let msg_digest = p2.buffer();
+    trace_println!("allocating signing operation");
+    ecdsa.op = Asymmetric::allocate(AlgorithmId::EcdsaP256, OperationMode::Sign, 256).unwrap();
+    // setting ket for sign
+    trace_println!("Setting key for signing");
+    // using our key pair generated
 
-    let digest = Sha256::new().chain("sample");
-    let k = generate_k(&x, digest, &[]);
+    ecdsa.op.set_key(&ecdsa.key)?;
+
+    trace_println!("generate signing key");
+    ecdsa.op.
+        sign_digest(&[], &msg_digest, &mut sign_buff);
+    trace_println!("The generated signature {:?}", &sign_buff);
+
+
     Ok(())
 }
+

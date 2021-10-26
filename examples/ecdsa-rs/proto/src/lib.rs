@@ -5,6 +5,8 @@ pub enum Command {
     Verify,
     GenKey,
     RandomK,
+    Update,
+    DoFinal,
     Unknown,
 }
 impl From<u32> for Command {
@@ -15,6 +17,8 @@ impl From<u32> for Command {
             1 => Command::Verify,
             2 => Command::GenKey,
             3 => Command::RandomK,
+            4 => Command::Update,
+            5 => Command::DoFinal,
             _ => Command::Unknown,
         }
     }
