@@ -4,7 +4,7 @@ use proto::{Command, UUID, KEY_SIZE};
 use std::{env, str};
 
 
-/// function generate key
+/// function using ecc keypairs to derive ecdh shared key
 
 pub fn generate_key(session: &mut Session) -> Result<(Vec<u8>, Vec<u8>)> {
     // prime base vector

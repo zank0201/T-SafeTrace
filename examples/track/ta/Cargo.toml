@@ -12,10 +12,10 @@ libc = { path = "../../../rust/libc" }
 proto = { path = "../proto" }
 optee-utee-sys = { path = "../../../optee-utee/optee-utee-sys" }
 optee-utee = { path = "../../../optee-utee" }
-num-bigint = "0.4"
 [build_dependencies]
 uuid = { version = "0.8" }
 proto = { path = "../proto" }
 
 [profile.release]
 lto = true
+opt-level = 1

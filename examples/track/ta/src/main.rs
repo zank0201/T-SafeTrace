@@ -1,11 +1,14 @@
-
+#![feature(restricted_std)]
 #![no_main]
-mod ta_hotp;
-use ta_hotp::HmacOtp;
 
-mod ta_keygen;
-use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
-use ta_keygen::generate_key;
+pub mod crypto;
+use crate::crypto::context::Operations;
+pub use crypto::*;
+use crate::ta_hotp::*;
+use crate::nistp256::*;
+use crate::ta_keygen::*;
+// use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
+// use ta_keygen::generate_key;
 use optee_utee::{
     ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
 };
@@ -22,13 +25,13 @@ fn create() -> Result<()> {
 }
 
 #[ta_open_session]
-fn open_session(_params: &mut Parameters, _sess_ctx: &mut HmacOtp) -> Result<()> {
+fn open_session(_params: &mut Parameters, _sess_ctx: &mut Operations) -> Result<()> {
     trace_println!("[+] TA open session");
     Ok(())
 }
 
 #[ta_close_session]
-fn close_session(_sess_ctx: &mut HmacOtp) {
+fn close_session(_sess_ctx: &mut Operations) {
     trace_println!("[+] TA close session");
 }
 
@@ -38,15 +41,40 @@ fn destroy() {
 }
 
 #[ta_invoke_command]
-fn invoke_command(sess_ctx: &mut HmacOtp, cmd_id: u32, params: &mut Parameters) -> Result<()> {
+fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Parameters) -> Result<()> {
     trace_println!("[+] TA invoke command");
     match Command::from(cmd_id) {
-        Command::RegisterSharedKey => register_shared_key(sess_ctx, params),
-        Command::GetHOTP => get_hotp(sess_ctx, params),
-        Command::GenerateKey => generate_key(sess_ctx, params),
-        _ => Err(Error::new(ErrorKind::BadParameters)),
+        Command::RegisterSharedKey => {
+            return register_shared_key(sess_ctx, _params);
+        }
+        Command::GetHOTP => {
+            return get_hotp(sess_ctx, _params);
+        }
+        Command::GenerateKey => {
+            return generate_key(sess_ctx, _params);
+        }
+        // call prepare function using input data from host
+        Command::GenKey => {
+            return ecdsa_keypair(sess_ctx, _params);
+        }
+        // Command::RandomK => {
+        //     return random(_params, sess_ctx);
+        // }
+        Command::Sign => {
+            return generate_sign(sess_ctx, _params);
+        }
+        Command::Update => {
+            return update(sess_ctx, _params);
+        }
+        Command::DoFinal => {
+            return do_final(sess_ctx, _params);
+        }
+
+        _ => {
+            return Err(Error::new(ErrorKind::BadParameters));
         }
     }
+}
 
 
 // TA configurations

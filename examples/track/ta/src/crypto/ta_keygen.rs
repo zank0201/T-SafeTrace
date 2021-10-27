@@ -1,7 +1,7 @@
 // Need to generate a random key
 // that can be authenticated with the data we have
 
-use crate::ta_hotp::HmacOtp;
+pub use crate::crypto::context::{Operations};
 use optee_utee::trace_println;
 use optee_utee::{AlgorithmId, DeriveKey};
 use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
@@ -10,7 +10,7 @@ use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
 
 /// Ta function generating DH key pair
-pub fn generate_key(dh: &mut HmacOtp, params: &mut Parameters) -> Result<()> {
+pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> {
 //     Call p0-p3 from host
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let mut p1 = unsafe { params.1.as_value().unwrap() };

@@ -13,36 +13,12 @@ use optee_utee::{
 use std::convert::TryInto;
 use std::iter::FromIterator;
 use std::mem::replace;
-use num_bigint::{BigInt, ToBigInt, Sign};
+
+pub use crate::crypto::context::*;
 
 use std::str;
-pub const SHA1_HASH_SIZE: usize = 20;
-pub const MAX_KEY_SIZE: usize = 64;
-pub const MIN_KEY_SIZE: usize = 10;
-pub const DBC2_MODULO: u32 = 100000000;
-
-// Add transient object
-
-pub struct HmacOtp {
-    pub counter: [u8; 8],
-    pub key: [u8; MAX_KEY_SIZE],
-    pub dh_key: TransientObject,
-    pub key_len: usize,
-}
-
-impl Default for HmacOtp {
-    fn default() -> Self {
-        Self {
-            counter: [0u8; 8],
-            key: [0u8; MAX_KEY_SIZE],
-            dh_key: TransientObject::null_object(),
-            key_len: 0,
-        }
-    }
-}
-
-
-pub fn get_time(hotp: &mut HmacOtp) -> [u8; 8] {
+//TODO get otp to sync with user's time
+pub fn get_time(hotp: &mut Operations) -> [u8; 8] {
     let start_time:u64 = 0;
     let time_step: u64 = 30;
 
@@ -58,14 +34,9 @@ pub fn get_time(hotp: &mut HmacOtp) -> [u8; 8] {
     t
 
 }
-// converts hex string to Byte
-// pub fn hexStrtoBytes(string_hex: String) -> String {
-//     let hash = string_hex.as_bytes();
-//     return hash.to_hex();
-// }
 
 
-pub fn register_shared_key(hotp: &mut HmacOtp,params: &mut Parameters) -> Result<()> {
+pub fn register_shared_key(hotp: &mut Operations,params: &mut Parameters) -> Result<()> {
     let mut p = unsafe { params.0.as_memref().unwrap() };
     let buffer = p.buffer();
 
@@ -82,7 +53,7 @@ pub fn register_shared_key(hotp: &mut HmacOtp,params: &mut Parameters) -> Result
 
 }
 
-pub fn get_hotp(hotp: &mut HmacOtp, params: &mut Parameters) -> Result<()> {
+pub fn get_hotp(hotp: &mut Operations, params: &mut Parameters) -> Result<()> {
     let mut mac: [u8; SHA1_HASH_SIZE] = [0x0; SHA1_HASH_SIZE];
 
     hotp.counter = get_time(hotp);
@@ -95,7 +66,7 @@ pub fn get_hotp(hotp: &mut HmacOtp, params: &mut Parameters) -> Result<()> {
     Ok(())
 }
 
-pub fn hmac_sha1(hotp: &mut HmacOtp, out: &mut [u8]) -> Result<usize> {
+pub fn hmac_sha1(hotp: &mut Operations, out: &mut [u8]) -> Result<usize> {
     if hotp.key_len < MIN_KEY_SIZE || hotp.key_len > MAX_KEY_SIZE {
         return Err(Error::new(ErrorKind::BadParameters));
     }
