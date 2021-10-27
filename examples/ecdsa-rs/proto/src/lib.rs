@@ -24,22 +24,7 @@ impl From<u32> for Command {
     }
 }
 
-pub enum Mode {
-    Sign,
-    Verify,
-    Unknown,
-}
 
-impl From<u32> for Mode {
-    #[inline]
-    fn from(value: u32) -> Mode {
-        match value {
-            0 => Mode::Sign,
-            1 => Mode::Verify,
-            _ => Mode::Unknown,
-        }
-    }
-}
 pub const BUFFER_SIZE: usize = 16;
 pub const KEY_SIZE: usize = 256;
 pub const AAD_LEN: usize = 16;
