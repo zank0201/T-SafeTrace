@@ -1,13 +1,15 @@
-
+#![feature(restricted_std)]
 pub enum Command {
     // TOTP
     RegisterSharedKey,
     GetHOTP,
-    Test,
-    //Dh key generation
     GenerateKey,
     DeriveKey,
-
+    Sign,
+    Verify,
+    GenKey,
+    Update,
+    DoFinal,
 
     Unknown,
 }
@@ -18,9 +20,13 @@ impl From<u32> for Command {
         match value {
             0 => Command::RegisterSharedKey,
             1 => Command::GetHOTP,
-            2 => Command::Test,
-            3 => Command::GenerateKey,
-            4 => Command::DeriveKey,
+            2 => Command::GenerateKey,
+            3 => Command::DeriveKey,
+            4 => Command::Sign,
+            5 => Command::Verify,
+            6 => Command::GenKey,
+            7 => Command::Update,
+            8 => Command::DoFinal,
             _ => Command::Unknown,
         }
     }
@@ -28,5 +34,7 @@ impl From<u32> for Command {
 
 // Key size 20 bytes
 pub const KEY_SIZE: usize = 256;
-
+pub const BUFFER_SIZE: usize = 16;
+pub const AAD_LEN: usize = 16;
+pub const TAG_LEN: usize = 16;
 pub const UUID: &str = &include_str!(concat!(env!("OUT_DIR"), "/uuid.txt"));
