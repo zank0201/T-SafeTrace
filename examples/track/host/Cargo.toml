@@ -11,6 +11,8 @@ edition = "2018"
 libc = "0.2.48"
 proto = { path = "../proto" }
 optee-teec = { path = "../../../optee-teec" }
-
+serde ="1.0.130"
+tokio = "1.13.0"
 [profile.release]
 lto = true
+opt-level = 1

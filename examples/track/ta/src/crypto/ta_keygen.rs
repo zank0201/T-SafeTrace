@@ -4,44 +4,50 @@
 pub use crate::crypto::context::{Operations};
 use optee_utee::trace_println;
 use optee_utee::{AlgorithmId, DeriveKey};
-use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
+use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, TransientObject, TransientObjectType};
 
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
 
 /// Ta function generating DH key pair
-pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> {
-//     Call p0-p3 from host
-    let mut p0 = unsafe { params.0.as_memref().unwrap() };
-    let mut p1 = unsafe { params.1.as_value().unwrap() };
-    let mut p2 = unsafe { params.2.as_memref().unwrap() };
-    let mut p3 = unsafe { params.3.as_memref().unwrap() };
-//     convert vector to bytes value
-    let prime_base = p0.buffer();
-    let prime_slice = &prime_base[..KEY_SIZE/8];
-    let base_slice = &prime_base[KEY_SIZE/8..];
-    trace_println!("{:?}", &base_slice);
 
-    let attr_prime = AttributeMemref::from_ref(AttributeId::DhPrime, prime_slice);
-    let attr_base = AttributeMemref::from_ref(AttributeId::DhBase, base_slice);
-
-//     Generate key pair
-    dh.dh_key = TransientObject::allocate(TransientObjectType::DhKeypair, KEY_SIZE).unwrap();
-    // convert output vectors to bytes`
-    let mut public_buffer = p2.buffer();
-    let mut private_buffer = p3.buffer();
-
-    dh.dh_key
-        .generate_key(KEY_SIZE, &[attr_prime.into(), attr_base.into()])?;
-    let mut key_size = dh
-        .dh_key
-        .ref_attribute(AttributeId::DhPublicValue, &mut public_buffer)
-        .unwrap();
-    p1.set_a(key_size as u32);
-    key_size = dh
-        .dh_key
-        .ref_attribute(AttributeId::DhPrivateValue, &mut private_buffer)
-        .unwrap();
-    p1.set_b(key_size as u32);
+pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
+    trace_println!("allocate transient object to ecdh keypair");
+    key.ecdh_keypair = TransientObject::allocate(TransientObjectType::EcdhKeypair, KEY_SIZE).unwrap();
+    let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
+    trace_println!("Generate out keypair");
+    key.ecdh_keypair
+        .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
+    trace_println!("Done generating");
     Ok(())
+}
+pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> {
+    let mut p0 = unsafe{params.0.as_value().unwrap()};
+    let mut p1 = unsafe{params.1.as_memref().unwrap()};
+    // ecc x
+    let mut p2 = unsafe{params.2.as_memref().unwrap()};
+    // ecc y
+    let mut p3 = unsafe{params.3.as_memref().unwrap()};
+
+    let ecc_x = AttributeMemref::from_ref(AttributeId::EccPublicValueX, p2.buffer());
+    let ecc_y = AttributeMemref::from_ref(AttributeId::EccPublicValueY, p3.buffer());
+    trace_println!("allocate object");
+    match DeriveKey::allocate(AlgorithmId::EcdhDeriveSharedSecret, KEY_SIZE) {
+        Err(e) => Err(e),
+        Ok(operation) => {
+            trace_println!("set key for ecdsa");
+            operation.set_key(&dh.ecdh_keypair)?;
+            trace_println!("Allocate Generic secret");
+            let mut derived_key =
+            TransientObject::allocate(TransientObjectType::GenericSecret, KEY_SIZE).unwrap();
+            trace_println!("derive keys operation");
+            operation.derive(&[ecc_x.into(), ecc_y.into()], &mut derived_key);
+            let key_size = derived_key
+                .ref_attribute(AttributeId::SecretValue, p1.buffer())
+                .unwrap();
+            p0.set_a(key_size as u32);
+            Ok(())
+        }
+    }
+
 }

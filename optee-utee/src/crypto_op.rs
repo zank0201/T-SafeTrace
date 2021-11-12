@@ -1743,6 +1743,7 @@ pub enum AlgorithmId {
     /// [Mac](Mac) supported algorithm.
     HmacSha512 = 0x30000006,
     EcdsaP256 = 0x70003041,
+    EcdhDeriveSharedSecret = 0x80003042,
 
     /// Reserved for GlobalPlatform compliance test applications.
     IllegalValue = 0xefffffff,

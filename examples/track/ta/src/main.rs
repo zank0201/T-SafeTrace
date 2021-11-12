@@ -2,11 +2,16 @@
 #![no_main]
 
 pub mod crypto;
+pub mod tcplistener;
+pub use tcplistener::*;
+use crate::tcpconnect::*;
 use crate::crypto::context::Operations;
 pub use crypto::*;
 use crate::ta_hotp::*;
 use crate::nistp256::*;
 use crate::ta_keygen::*;
+use crate::randomGen::*;
+use crate::authenticated::*;
 // use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
 // use ta_keygen::generate_key;
 use optee_utee::{
@@ -50,26 +55,46 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
         Command::GetHOTP => {
             return get_hotp(sess_ctx, _params);
         }
-        Command::GenerateKey => {
+        Command::DeriveKey => {
             return generate_key(sess_ctx, _params);
         }
         // call prepare function using input data from host
         Command::GenKey => {
             return ecdsa_keypair(sess_ctx, _params);
         }
-        // Command::RandomK => {
-        //     return random(_params, sess_ctx);
-        // }
+
         Command::Sign => {
             return generate_sign(sess_ctx, _params);
         }
         Command::Update => {
             return update(sess_ctx, _params);
         }
+        Command::Prepare => {
+            return prepare(sess_ctx, _params);
+        }
+        Command::AuthUpdate => {
+            trace_println!("invoke update");
+            return auth_update(sess_ctx, _params);
+        }
+        Command::EncFinal => {
+            trace_println!("invoke encrypt");
+            return auth_encrypt(sess_ctx, _params);
+        }
+        Command::DecFinal => {
+            trace_println!("invoke decrypt");
+            return auth_decrypt(sess_ctx, _params);
+        }
         Command::DoFinal => {
             return do_final(sess_ctx, _params);
         }
+        // Command::Start => {
+        //     trace_println!("invoke start");
+        //     return tcp_client();
+        // }
 
+        Command::RandomGenerator => {
+            return random_number_generate(_params);
+        }
         _ => {
             return Err(Error::new(ErrorKind::BadParameters));
         }

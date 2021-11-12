@@ -103,7 +103,7 @@ pub fn truncate(hmac_result: &mut [u8]) -> u32 {
         | ((hmac_result[offset + 1] & 0xff) as u32) << 16
         | ((hmac_result[offset + 2] & 0xff) as u32) << 8
         | ((hmac_result[offset + 3] & 0xff) as u32);
-    trace_println!("bin_code{:?}", bin_code);
+
     bin_code %= DBC2_MODULO;
     return bin_code;
 }

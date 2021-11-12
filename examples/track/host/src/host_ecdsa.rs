@@ -6,9 +6,8 @@ use proto::{Command,  AAD_LEN, BUFFER_SIZE, KEY_SIZE, UUID};
 /// parameters:
 /// 1) session
 /// returns private key generated from ta
-pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<()> {
+pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<(Vec<u8>, Vec<u8>)> {
 
-    //TODO integrate edcsa from https://github.com/OP-TEE/optee_os/issues/1378
 
     // output arrays to get private and public values
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
@@ -16,20 +15,23 @@ pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<()> {
     let mut publickey_x = [0u8; KEY_SIZE];
     let mut publickey_y = [0u8; KEY_SIZE];
 
-    let p0 = ParamTmpRef::new_output(&mut private_key);
-    let p1 = ParamTmpRef::new_output(&mut publickey_x);
-    let p2 = ParamTmpRef::new_output(&mut publickey_y);
+    let p1 = ParamTmpRef::new_output(&mut private_key);
+    let p2 = ParamTmpRef::new_output(&mut publickey_x);
+    let p3 = ParamTmpRef::new_output(&mut publickey_y);
 //     call operation from TEE
+
     println!("invoking operation");
-    let mut operation = Operation::new(0, p0, p1, p2,ParamNone);
+    let mut operation = Operation::new(0, p0, p1, p2, p3);
     session.invoke_command(Command::GenKey as u32, &mut operation)?;
 
-    // let publicx_size = operation.parameters().0.a() as usize;
-    // let mut public_res = vec![0u8; publicx_size];
-    // public_res.copy_from_slice(&publickey_x[..publicx_size]);
-    // println!("print public key generated {:?}", &public_res);
+    let publicx_size = operation.parameters().0.a() as usize;
+    let publicy_size = operation.parameters().0.b() as usize;
+    let mut publicx_res = vec![0u8; publicx_size];
+    let mut publicy_res = vec![0u8; publicy_size];
+    publicx_res.copy_from_slice(&publickey_x[..publicx_size]);
+    publicy_res.copy_from_slice(&publickey_y[..publicy_size]);
 
-    Ok(())
+    Ok((publicx_res, publicy_res))
 
 //
 }
@@ -49,9 +51,7 @@ pub fn generate_sign(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Res
     session.invoke_command(Command::Sign as u32, &mut operation)?;
     Ok(())
 }
-// fn verify(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Result<()> {
-//
-// }
+//TODO create individual verify function
 
 
 // digest functions
