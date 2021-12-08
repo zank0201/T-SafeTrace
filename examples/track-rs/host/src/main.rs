@@ -1,15 +1,12 @@
-#![warn(rust_2018_idioms)]
+
 
 mod unix;
 mod hotp;
 mod host_keygen;
 mod host_ecdsa;
 mod data;
-mod networking;
-
 // mod networking;
-use crate::networking::tcpListner::*;
-use std::time::Duration;
+// mod UserInterface;
 
 
 use optee_teec::{
@@ -24,15 +21,18 @@ use host_ecdsa::{ecdsa_keypair, generate_sign, update, do_final};
 use proto::{Command, Mode, AAD_LEN, BUFFER_SIZE, K_LEN, TAG_LEN, UUID};
 
 
-
+//TODO clean main function
 fn main() -> optee_teec::Result<()> {
 
 
     // TOTP main arguments
     let mut ctx = Context::new()?;
+
     let uuid = Uuid::parse_str(UUID).unwrap();
+
     let mut session = ctx.open_session(uuid)?;
     // DH key generation
+
 
 
 
@@ -97,9 +97,10 @@ fn main() -> optee_teec::Result<()> {
     } else {
         println!("Clear text and decoded text differ => ERROR");
     }
-    // random_uuid(&mut session);
-    // tcp_client(&mut session);
-
+//     // random_uuid(&mut session);
+//     // tcp_client();
+//
+//     println!("testing bind");
     println!("Success");
     Ok(())
 }

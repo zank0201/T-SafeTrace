@@ -22,7 +22,7 @@ OPTEE_CLIENT_PATH ?= $(OPTEE_PATH)/optee_client
 
 CCACHE ?= $(shell which ccache)
 
-EXAMPLES = $(wildcard examples/track)
+EXAMPLES = $(wildcard examples/track-rs)
 EXAMPLES_INSTALL = $(EXAMPLES:%=%-install)
 EXAMPLES_CLEAN  = $(EXAMPLES:%=%-clean)
 
@@ -32,7 +32,7 @@ ifneq ($(ARCH), arm)
 	HOST_TARGET := aarch64-unknown-linux-gnu
 	TA_TARGET := aarch64-unknown-optee-trustzone
 else
-	VENDOR := qemu.mk
+	VENDOR := stm32mp1.mk
 	ARCH_CROSS_COMPILE := $(OPTEE_PATH)/toolchains/aarch32/bin/arm-linux-gnueabihf-
 	HOST_TARGET := arm-unknown-linux-gnueabihf
 	TA_TARGET := arm-unknown-optee-trustzone
@@ -49,6 +49,9 @@ optee-os:
 
 OPTEE_CLIENT_FLAGS ?= CROSS_COMPILE="$(CCACHE) $(AARCH_CROSS_COMPILE)" \
 	CFG_TEE_BENCHMARK=n \
+	CFG_TEE_CORE_DEBUG=y \
+	CFG_TEE_TA_LOG_LEVEL=3 \
+	CFG_UNWIND=y \
 	CFG_TA_TEST_PATH=y
 
 optee-client:

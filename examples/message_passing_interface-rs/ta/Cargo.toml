@@ -35,5 +35,5 @@ uuid = { version = "0.8" }
 proto = { path = "../proto" }
 
 [profile.release]
-lto = false
+lto = true
 opt-level = 1

@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
-NAME := track
+NAME := track-rs
 ARCH ?= aarch64
 
 OPTEE_DIR ?= ../../../optee
@@ -36,7 +36,7 @@ OUT_DIR := $(CURDIR)/target/$(TARGET)/release
 all: host strip
 
 host:
-	@cargo build --target $(TARGET) --release --verbose
+	@cargo build --target $(TARGET) --release
 
 strip:
 	@$(OBJCOPY) --strip-unneeded $(OUT_DIR)/$(NAME) $(OUT_DIR)/$(NAME)

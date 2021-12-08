@@ -1,5 +1,13 @@
 #![feature(restricted_std)]
 #![no_main]
+use optee_utee::{
+    ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
+};
+use optee_utee::{AlgorithmId, Mac};
+use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
+use optee_utee::{Error, ErrorKind, Parameters, Result};
+use proto::Command;
+use optee_utee::{Asymmetric,};
 
 pub mod crypto;
 pub mod tcplistener;
@@ -12,15 +20,14 @@ use crate::nistp256::*;
 use crate::ta_keygen::*;
 use crate::randomGen::*;
 use crate::authenticated::*;
-// use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
-// use ta_keygen::generate_key;
-use optee_utee::{
-    ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
-};
-use optee_utee::{AlgorithmId, Mac};
-use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
-use optee_utee::{Error, ErrorKind, Parameters, Result};
-use proto::Command;
+use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
+use ta_keygen::generate_key;
+
+pub const SHA1_HASH_SIZE: usize = 20;
+pub const MAX_KEY_SIZE: usize = 64;
+pub const MIN_KEY_SIZE: usize = 10;
+pub const DBC2_MODULO: u32 = 100000000;
+// struct containing public key and secret key
 
 
 #[ta_create]
@@ -104,14 +111,14 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
 
 // TA configurations
 const TA_FLAGS: u32 = 0;
-const TA_DATA_SIZE: u32 = 32 * 1024;
-const TA_STACK_SIZE: u32 = 2 * 1024;
+const TA_DATA_SIZE: u32 =96 * 1024;
+const TA_STACK_SIZE: u32 = 6 * 1024;
 const TA_VERSION: &[u8] = b"0.1\0";
 const TA_DESCRIPTION: &[u8] = b"This is an HOTP example.\0";
-const EXT_PROP_VALUE_1: &[u8] = b"HOTP TA\0";
+const EXT_PROP_VALUE_1: &[u8] = b"Thesis TA\0";
 const EXT_PROP_VALUE_2: u32 = 0x0010;
 const TRACE_LEVEL: i32 = 4;
 const TRACE_EXT_PREFIX: &[u8] = b"TA\0";
-const TA_FRAMEWORK_STACK_SIZE: u32 = 2048;
+const TA_FRAMEWORK_STACK_SIZE: u32 = 2*2048;
 
 include!(concat!(env!("OUT_DIR"), "/user_ta_header.rs"));
