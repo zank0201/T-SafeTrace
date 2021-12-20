@@ -32,7 +32,6 @@ endif
 
 OUT_DIR := $(CURDIR)/target/$(TARGET)/release
 
-
 all: host strip
 
 host:

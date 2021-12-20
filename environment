@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 export ARCH=arm
-export OPTEE_DIR=/home/zanele/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Developer-Package/stm32mp1-openstlinux-5.10-dunfell-mp1-21-11-17/sources/arm-ostl-linux-gnueabi/optee-os-stm32mp-3.12.0-stm32mp-r2-r0
+export OPTEE_DIR=/home/zanele/STM32MPU_workspace/STM32MP15-Ecosystem-v3.0.0/Distribution-Package/openstlinux-5.10-dunfell-mp1-21-11-17/build-openstlinuxweston-stm32mp1/workspace/sources
 export RUST_TARGET_PATH="$(pwd)"
 export RUST_COMPILER_RT_ROOT=$RUST_TARGET_PATH/rust/rust/src/llvm-project/compiler-rt
 if [ -z "$OPTEE_DIR" ]

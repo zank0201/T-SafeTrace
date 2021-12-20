@@ -11,6 +11,8 @@ edition = "2018"
 libc = "0.2.48"
 proto = { path = "../proto" }
 optee-teec = { path = "../../../optee-teec" }
-
+futures = { version = "0.1.25", default-features = false }
+tokio-zmq = "0.9.0"
+zmq = {version = "0.9.0", features = ["vendored"]}
 [profile.release]
 lto = true
