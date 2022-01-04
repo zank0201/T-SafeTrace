@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use optee_teec::{
     Context, Operation, ParamNone, ParamTmpRef, ParamType, ParamValue, Session, Uuid,
 };

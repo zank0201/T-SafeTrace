@@ -1,5 +1,6 @@
-
-use optee_teec::{Context, Operation, ParamType, Session, Uuid, Result};
+#![allow(unused_imports)]
+#![allow(unused)]
+use optee_teec::{Operation, ParamType, Session};
 use optee_teec::{Error, ErrorKind, ParamNone, ParamTmpRef, ParamValue};
 use proto::{Command, UUID, KEY_SIZE};
 use std::{env, str};
@@ -7,7 +8,7 @@ use std::{env, str};
 
 /// function using ecc keypairs to derive ecdh shared key
 
-pub fn derive_key(session: &mut Session, ecc_x: &Vec<u8>, ecc_y: &Vec<u8>) -> optee_teec::Result<(Vec<u8>)> {
+pub fn derive_key(session: &mut Session, ecc_x: &Vec<u8>, ecc_y: &Vec<u8>) -> optee_teec::Result<Vec<u8>> {
    let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
    let mut derived_secret = [0u8;65];
    let p1 = ParamTmpRef::new_output(&mut derived_secret);
@@ -21,7 +22,7 @@ pub fn derive_key(session: &mut Session, ecc_x: &Vec<u8>, ecc_y: &Vec<u8>) -> op
    let mut derive_res = vec![0u8; key_size];
    derive_res.copy_from_slice(&derived_secret[..key_size]);
    println!("Derived shared secret {:?}", derive_res);
-   Ok((derive_res))
+   Ok(derive_res)
 }
 
 

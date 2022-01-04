@@ -99,6 +99,7 @@ pub fn generate_sign(ecdsa: &mut Operations, params: &mut Parameters) -> Result<
     trace_println!("set key operation");
     ecdsa.ecdsa_op.set_key(&ecdsa.ecdsa_keypair)?;
     trace_println!("verify");
+    //TODO add verify to OTP verification
     ecdsa.ecdsa_op.
         verify_digest(&[], &msg_digest, &sign_buff);
     trace_println!("Successful verification");

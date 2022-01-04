@@ -1,3 +1,4 @@
+#![allow(unused_imports)]
 use optee_teec::{Context, Operation, ParamNone, ParamTmpRef, Session, Uuid};
 use proto::{Command, UUID};
 
