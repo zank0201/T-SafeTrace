@@ -48,7 +48,32 @@ const server = jayson.server ({
             // c[msg.id](null, msg);
         }
 
+    },
+// generate totp is called when we need to verify that a user is indeed who they
+//    they are but this needs your secret token
+    GenerateTotp: async function(args, callback) {
+        const id = generateId()
+        c[id] = callback;
+        if(args.userPubKey && args.userPubKey.length == 64) {
+            try {
+                await socket.send(JSON.stringify({
+                    id : id,
+                    type : 'GenerateTotp',
+                    userPubKey: args.userPubKey
+                }));
+            } catch (err) {
+                callback(err);
+            }
+        } else {
+            return callback({
+                code: _INVALID_PARAM,
+                message: "Invalid params"
+            });
+        }
+
     }
+
+
 
 
 });
