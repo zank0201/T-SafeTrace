@@ -11,9 +11,8 @@ use optee_utee::{Asymmetric,};
 
 pub mod crypto;
 pub mod tcplistener;
+pub mod storage;
 pub use tcplistener::*;
-use crate::tcpconnect::*;
-use crate::crypto::context::Operations;
 pub use crypto::*;
 use crate::ta_hotp::*;
 use crate::nistp256::*;
@@ -22,6 +21,8 @@ use crate::randomGen::*;
 use crate::authenticated::*;
 use ta_hotp::{register_shared_key, get_hotp, hmac_sha1, truncate};
 use ta_keygen::generate_key;
+use storage::data::*;
+
 
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
@@ -102,6 +103,17 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
         Command::RandomGenerator => {
             return random_number_generate(_params);
         }
+// storage functions
+        Command::Write => {
+            return create_raw_object(_params);
+        }
+        Command::Read => {
+            return read_raw_object(_params);
+        }
+        Command::Delete => {
+            return delete_object(_params);
+        }
+
         _ => {
             return Err(Error::new(ErrorKind::BadParameters));
         }

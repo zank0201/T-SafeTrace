@@ -1,4 +1,11 @@
 use optee_utee::{TransientObject, TransientObjectType, AE, AlgorithmId, ElementId, Asymmetric, Digest};
+
+
+use serde_json::{Value, json};
+use serde::{Deserialize, Serialize};
+// use rmp_serde::{Deserializer, Serializer};
+//
+
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
 pub const MIN_KEY_SIZE: usize = 10;
@@ -37,4 +44,28 @@ impl Default for Operations {
         }
     }
 }
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct User {
+    ecc_x: String,
+    ecc_y: String,
+    derived_key: String,
 
+}
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct Geolocation {
+    lat: f64,
+    lng: f64,
+    startTS: i32,
+    endTS: i32,
+    testResult: bool
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(tag = "type")]
+pub enum Storage_Data{
+    _add_new_user {#[serde(flatten)] user: User, location: Geolocation}
+}
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[serde(rename_all = "camelCase", rename = "result")]
+pub enum User_Results {
+
+}
