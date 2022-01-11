@@ -71,7 +71,31 @@ const server = jayson.server ({
             });
         }
 
-    }
+    },
+    addPersonalData: async function(args, callback) {
+        const id = generateId()
+        c[id] = callback;
+        if(args.encryptedUserId && args.encryptedData && args.userPubKey) {
+            try {
+                await socket.send(JSON.stringify({
+                    id : id,
+                    type : 'AddPersonalData',
+                    input: {
+                        encryptedUserId: args.encryptedUserId,
+                        encryptedData: args.encryptedData,
+                        userPubKey: args.userPubKey
+                    }
+                }));
+            } catch (err) {
+                callback(err);
+            }
+        } else {
+            return callback({
+                code: _INVALID_PARAM,
+                message: "Invalid params"
+            });
+        }
+    },
 
 
 

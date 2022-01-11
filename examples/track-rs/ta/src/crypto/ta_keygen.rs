@@ -8,7 +8,8 @@ use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, Transi
 
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
-
+use crate::storage::data::*;
+pub use crate::crypto::context::{Operations, User, Geolocation};
 /// Ta function generating DH key pair
 
 pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
@@ -21,6 +22,8 @@ pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
     trace_println!("Done generating");
     Ok(())
 }
+//TODO connect create object to function
+// Link ecdh derive key with ecdsa
 pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> {
     let mut p0 = unsafe{params.0.as_value().unwrap()};
     let mut p1 = unsafe{params.1.as_memref().unwrap()};

@@ -12,6 +12,8 @@ use rmp_serde::Deserializer;
 use serde::Deserialize;
 use serde_json::Value;
 use proto::{Command,  AAD_LEN, BUFFER_SIZE, KEY_SIZE, UUID};
+use nanoid::nanoid;
+
 /// Function taking in edcsa paramaters for P-256
 /// parameters:
 /// 1) session
@@ -20,18 +22,20 @@ use proto::{Command,  AAD_LEN, BUFFER_SIZE, KEY_SIZE, UUID};
 use rustc_hex::{FromHex, ToHex};
 type ResponseResult = Result<IpcResponse, Error>;
 use failure::Error;
+/// Function linked to [`generate_sign()`]
 pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<(Vec<u8>, Vec<u8>)> {
 
 
     // output arrays to get private and public values
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
-    let mut private_key = [0u8; KEY_SIZE];
     let mut publickey_x = [0u8; KEY_SIZE];
     let mut publickey_y = [0u8; KEY_SIZE];
+    let user_id = nanoid!(10);
 
-    let p1 = ParamTmpRef::new_output(&mut private_key);
+    let p1 = ParamTmpRef::new_input(user_id.as_bytes());
     let p2 = ParamTmpRef::new_output(&mut publickey_x);
     let p3 = ParamTmpRef::new_output(&mut publickey_y);
+
 //     call operation from TEE
 
     println!("invoking operation");
@@ -56,6 +60,8 @@ pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<(Vec<u8>, Vec<
 /// 3) calculate random point; R = k * G and take its x-cordinate: r=R.x
 /// 4) calculate signature proof: s = k^-1 * (h + r * privkey)(mod n)
 /// 5) Return signature r,s
+/// @params:
+/// msgdigest = derived_key
 pub fn generate_sign(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Result<[u8;64]> {
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
     let mut signature = [0u8; 64];
@@ -66,10 +72,23 @@ pub fn generate_sign(session: &mut Session, msgdigest: &[u8]) -> optee_teec::Res
     session.invoke_command(Command::Sign as u32, &mut operation)?;
     Ok(signature)
 }
-//TODO create individual verify function
+
 
 
 // digest functions
+///Function verifying generated signature from [`generate_sign()`]
+/// msgdigest = task public key
+/// signature = generated signature
+/// returns bool of verification
+pub fn verify_sign(session: &mut Session, msgdigest: &[u8], signautre: [u8;64])
+    -> optee_teec::Result<()> {
+    let p0 = ParamTmpRef::new_input(&signautre);
+    let p1 = ParamTmpRef::new_input(&msgdigest);
+    let mut operation = Operation::new(0, p0, p1, ParamNone, ParamNone);
+    session.invoke_command(Command::Verify as u32, &mut operation);
+
+    Ok(())
+}
 pub fn update(session: &mut Session, src: &[u8]) -> optee_teec::Result<()> {
     let p0 = ParamTmpRef::new_input(src);
     let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);

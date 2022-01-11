@@ -10,9 +10,9 @@ use proto::Command;
 use optee_utee::{Asymmetric,};
 
 pub mod crypto;
-pub mod tcplistener;
+
 pub mod storage;
-pub use tcplistener::*;
+
 pub use crypto::*;
 use crate::ta_hotp::*;
 use crate::nistp256::*;
@@ -68,7 +68,7 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
         }
         // call prepare function using input data from host
         Command::GenKey => {
-            return ecdsa_keypair(sess_ctx, _params);
+            return ecdsa_keypair(_params);
         }
 
         Command::Sign => {
@@ -104,9 +104,9 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
             return random_number_generate(_params);
         }
 // storage functions
-        Command::Write => {
-            return create_raw_object(_params);
-        }
+//         Command::Write => {
+//             return create_raw_object(_params);
+//         }
         Command::Read => {
             return read_raw_object(_params);
         }
