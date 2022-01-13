@@ -757,7 +757,7 @@ impl TransientObject {
     ///
     /// # Errors
     ///
-    /// 1) `CorruptObject`: If the persistentd` object is corrupt. The object handle is closed.
+    /// 1) `CorruptObject`: If the persistent` object is corrupt. The object handle is closed.
     /// 2) `StorageNotAvailable`: If the [PersistentObject](PersistentObject) is stored in a storage area which is
     ///    currently inaccessible.
     ///

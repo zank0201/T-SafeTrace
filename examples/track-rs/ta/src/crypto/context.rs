@@ -1,6 +1,7 @@
 use optee_utee::{TransientObject, ObjectInfo, ObjectHandle, TransientObjectType, AE, AlgorithmId, ElementId, Asymmetric, Digest};
 
 use derive_new::new;
+use std::{marker, mem, ptr};
 
 use serde_json::{Value, json};
 use serde::{Deserialize, Serialize};
@@ -15,7 +16,6 @@ pub const DBC2_MODULO: u32 = 100000000;
 
 pub struct Operations {
     pub ecdsa_keypair: TransientObject,
-    // pub ecdsa_info: ObjectInfo,
     pub ecdh_keypair: TransientObject,
     // pub ecdh_info: TransientObject,
     pub ecdsa_op: Asymmetric,
@@ -26,6 +26,7 @@ pub struct Operations {
     pub dh_key: TransientObject,
     pub key_len: usize,
     pub AeOp: AE,
+    pub user_details: User,
 
 
 }
@@ -34,7 +35,7 @@ impl Default for Operations {
     fn default() -> Self {
         Self {
             ecdsa_keypair: TransientObject::null_object(),
-            // ecdsa_info,
+
             ecdh_keypair: TransientObject::null_object(),
             // ecdh_info,
             ecdsa_op: Asymmetric::null(),
@@ -45,6 +46,7 @@ impl Default for Operations {
             dh_key: TransientObject::null_object(),
             key_len: 0,
             AeOp: AE::null(),
+            user_details: User::default(),
 
         }
     }
@@ -54,14 +56,15 @@ impl Default for Operations {
 #[derive(Default)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct User {
-    pub ecc_x: String,
-    pub ecc_y: String,
+    pub public_x: Vec<u8>,
+    pub public_y: Vec<u8>,
     // derived_key: String,
-    pub private_key: String,
+    pub private_key: Vec<u8>,
     //
     pub Geolocation_data: Geolocation,
 
 }
+
 #[derive(Serialize, Deserialize, Clone, Debug)]
 // #[serde(tag = "type")]
 pub struct Geolocation {

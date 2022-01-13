@@ -68,7 +68,7 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
         }
         // call prepare function using input data from host
         Command::GenKey => {
-            return ecdsa_keypair(_params);
+            return ecdsa_keypair(sess_ctx, _params);
         }
 
         Command::Sign => {
@@ -105,7 +105,7 @@ fn invoke_command(sess_ctx: &mut Operations, cmd_id: u32, _params: &mut Paramete
         }
 // storage functions
 //         Command::Write => {
-//             return create_raw_object(_params);
+//             return create_raw_object(sess_ctx,_params);
 //         }
         Command::Read => {
             return read_raw_object(_params);

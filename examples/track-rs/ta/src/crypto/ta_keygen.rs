@@ -9,7 +9,7 @@ use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, Transi
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
 use crate::storage::data::*;
-pub use crate::crypto::context::{Operations, User, Geolocation};
+pub use crate::crypto::context::{User, Geolocation};
 /// Ta function generating DH key pair
 
 pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
@@ -35,6 +35,15 @@ pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> 
     let ecc_x = AttributeMemref::from_ref(AttributeId::EccPublicValueX, p2.buffer());
     let ecc_y = AttributeMemref::from_ref(AttributeId::EccPublicValueY, p3.buffer());
     trace_println!("allocate object");
+    // let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
+
+    // match TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE) {
+    //     Err(e) => Err(e),
+    //     Ok(keypair) => {
+    //         keypair.generate_key(256, &[attr_ecc.into(), ecc_x.into(), ecc_y.into()])?;
+    //     Ok(())
+    //     }
+    // }
     match DeriveKey::allocate(AlgorithmId::EcdhDeriveSharedSecret, KEY_SIZE) {
         Err(e) => Err(e),
         Ok(operation) => {

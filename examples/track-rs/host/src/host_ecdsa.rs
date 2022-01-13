@@ -28,8 +28,8 @@ pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<(Vec<u8>, Vec<
 
     // output arrays to get private and public values
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
-    let mut publickey_x = [0u8; KEY_SIZE];
-    let mut publickey_y = [0u8; KEY_SIZE];
+    let mut publickey_x = [0u8; 255];
+    let mut publickey_y = [0u8; 255];
     let user_id = nanoid!(10);
 
     let p1 = ParamTmpRef::new_input(user_id.as_bytes());
