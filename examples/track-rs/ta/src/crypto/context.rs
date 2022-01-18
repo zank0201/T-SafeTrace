@@ -1,4 +1,5 @@
 use optee_utee::{TransientObject, ObjectInfo, ObjectHandle, TransientObjectType, AE, AlgorithmId, ElementId, Asymmetric, Digest};
+use std::collections::HashMap;
 
 use derive_new::new;
 use std::{marker, mem, ptr};
@@ -7,13 +8,23 @@ use serde_json::{Value, json};
 use serde::{Deserialize, Serialize};
 // use rmp_serde::{Deserializer, Serializer};
 //
-
+use rustc_hex::{FromHex, ToHex};
+pub use proto::{KEY_SIZE};
+pub type SymmetricKey = [u8; KEY_SIZE];
+pub type DHKey = SymmetricKey;
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
 pub const MIN_KEY_SIZE: usize = 10;
 pub const DBC2_MODULO: u32 = 100000000;
 // struct containing public key and secret key
 
+/// static ref keeping track of pubkey and derived key
+/// #Parameters
+/// Vec<u8>, = public key
+/// DHKey = derived key
+lazy_static! {
+    pub static ref DHKeys: HashMap<Vec<u8>, DHKey> = HashMap::new();
+}
 pub struct Operations {
     pub ecdsa_keypair: TransientObject,
     pub ecdh_keypair: TransientObject,
@@ -87,53 +98,23 @@ impl Default for Geolocation {
         }
 
 }
-// impl UserBuilder {
-//     pub fn new(ecc_x: impl Into<String>, ecc_y: impl Into<String>, private_key: impl Into<String>) -> Self {
-//         UserBuilder {
-//             ecc_x: ecc_x.into(),
-//             ecc_y: ecc_y.into(),
-//             // derived_key: "",
-//             private_key: private_key.into(),
-//             Geolocation_data: None,
+// pub struct Keypair {
+//     pubkey: (String),
+//     private_key: String,
+// }
+// impl Keypair {
+//     pub fn hex_keypair(&mut self, ecc_x: Vec<u8>, ecc_y: Vec<u8>, private_key: Vec<u8>)
+//     {
+//         // let public_x = ecc_x.to_hex();
+//         // let public_y = ecc_y.to_hex();
+//         // let hex_private = private_key.to_hex();
+//         let result = format!("{}\n{}", ecc_x.to_hex(), ecc_y.to_hex());
+//         self.pubkey = (result);
+//         self.private_key = private_key.to_hex();
+//     }
 //
-//         }
-//     }
-//     pub fn add_location(&mut self, Geolocation_data: Geolocation) -> Self {
-//         self.Geolocation_data = Some(Geolocation_data);
-//         self
-//     }
-//
-//     pub fn build(self) -> UserBuilder {
-//         let ecc_x = self.ecc_x;
-//         let ecc_y = self.ecc_y;
-//         let private_key = self.private_key;
-//         let Geolocation_data = self.
-//             Geolocation_data.expect("No data found");
-//         UserBuilder {ecc_x, ecc_y, private_key, Geolocation_data}
-//     }
-// }
-
-// pub struct User {
-//     pub ecc_x: String,
-//     pub ecc_y: String,
-//     // derived_key: String,
-//     pub private_key: String,
-//     //
-//     pub Geolocation_data: Geolocation,
-//
-// }
-// impl User {
-//     pub fn add_geolocation(&self) {
-//         if let Some(ref Geolocation_data) = self.Geolocation_data
-//     }
-// }
-// #[derive(Serialize, Deserialize, Debug, Clone)]
-// #[serde(tag = "type")]
-// pub enum Storage_Data{
-//     _add_new_user {#[serde(flatten)] user: User, location: Geolocation}
-// }
-// #[derive(Serialize, Deserialize, Debug, Clone)]
-// #[serde(rename_all = "camelCase", rename = "result")]
-// pub enum User_Results {
+//     // pub fn derive_public_pair(publickey: String) -> (Vec<u8>, Vec<u8>) {
+//     //     let ecc_x,
+//     // }
 //
 // }

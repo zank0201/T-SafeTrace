@@ -33,22 +33,34 @@ const server = jayson.server ({
     newTaskEncryptionKey: async function(args, callback) {
         const id = generateId()
         c[id] = callback;
+        if(args.userPubKey && args.userPubKey.length == 130) {
             try {
                 await socket.send(JSON.stringify({
-                    id : id,
-                    type : 'NewTaskEncryptionKey'
+                    id: id,
+                    type: 'NewTaskEncryptionKey',
+                    userPubKey: args.userPubKey
                 }));
+
             } catch (err) {
                 callback(err);
             }
-        for await (const [msg] of socket ){
-            console.log('Message received');
-            // [msg] = msg.toJSON();
-            console.log(JSON.parse(msg.toString()));
-            // c[msg.id](null, msg);
+            for await (const [msg] of socket ){
+                console.log('Message received');
+                // [msg] = msg.toJSON();
+                console.log(JSON.parse(msg.toString()));
+                // c[msg.id](null, msg);
+            }
         }
+        else
+            {
+                return callback({
+                    code: _INVALID_PARAM,
+                    message: "Invalid params"
+                });
 
-    },
+            }
+
+        },
 // generate totp is called when we need to verify that a user is indeed who they
 //    they are but this needs your secret token
     GenerateTotp: async function(args, callback) {

@@ -3,7 +3,7 @@
 use optee_teec::{
     Context, Operation, ParamNone, ParamTmpRef, ParamType, ParamValue, Session, Uuid,
 };
-
+const PREFIX: &'static [u8; 19] = b"Enigma User Message";
 // use hex::{FromHex, ToHex};
 use crate::host_keygen::{derive_key};
 use crate::networking::messages::*;
@@ -28,18 +28,19 @@ pub fn ecdsa_keypair(session: &mut Session) -> optee_teec::Result<(Vec<u8>, Vec<
 
     // output arrays to get private and public values
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
-    let mut publickey_x = [0u8; 255];
-    let mut publickey_y = [0u8; 255];
-    let user_id = nanoid!(10);
 
-    let p1 = ParamTmpRef::new_input(user_id.as_bytes());
-    let p2 = ParamTmpRef::new_output(&mut publickey_x);
-    let p3 = ParamTmpRef::new_output(&mut publickey_y);
+    let mut publickey_x = [0u8; 32];
+    let mut publickey_y = [0u8; 32];
+    // let user_id = nanoid!(10);
+
+    // let p1 = ParamTmpRef::new_input(user_id.as_bytes());
+    let p1 = ParamTmpRef::new_output(&mut publickey_x);
+    let p2 = ParamTmpRef::new_output(&mut publickey_y);
 
 //     call operation from TEE
 
     println!("invoking operation");
-    let mut operation = Operation::new(0, p0, p1, p2, p3);
+    let mut operation = Operation::new(0, p0, p1, p2, ParamNone);
     session.invoke_command(Command::GenKey as u32, &mut operation)?;
 
     let publicx_size = operation.parameters().0.a() as usize;

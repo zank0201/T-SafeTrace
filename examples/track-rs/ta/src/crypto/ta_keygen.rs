@@ -1,7 +1,7 @@
 // Need to generate a random key
 // that can be authenticated with the data we have
 
-pub use crate::crypto::context::{Operations};
+pub use crate::crypto::context::{Operations, User};
 use optee_utee::trace_println;
 use optee_utee::{AlgorithmId, DeriveKey};
 use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, TransientObject, TransientObjectType};
@@ -9,7 +9,7 @@ use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, Transi
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
 use crate::storage::data::*;
-pub use crate::crypto::context::{User, Geolocation};
+
 /// Ta function generating DH key pair
 
 pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
@@ -22,8 +22,7 @@ pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
     trace_println!("Done generating");
     Ok(())
 }
-//TODO connect create object to function
-// Link ecdh derive key with ecdsa
+
 pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> {
     let mut p0 = unsafe{params.0.as_value().unwrap()};
     let mut p1 = unsafe{params.1.as_memref().unwrap()};
@@ -35,24 +34,31 @@ pub fn generate_key(dh: &mut Operations, params: &mut Parameters) -> Result<()> 
     let ecc_x = AttributeMemref::from_ref(AttributeId::EccPublicValueX, p2.buffer());
     let ecc_y = AttributeMemref::from_ref(AttributeId::EccPublicValueY, p3.buffer());
     trace_println!("allocate object");
-    // let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
+    let private_value = AttributeMemref::from_ref(AttributeId::EccPrivateValue, &dh.user_details.private_key);
+    let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
 
-    // match TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE) {
-    //     Err(e) => Err(e),
-    //     Ok(keypair) => {
-    //         keypair.generate_key(256, &[attr_ecc.into(), ecc_x.into(), ecc_y.into()])?;
-    //     Ok(())
-    //     }
-    // }
+    trace_println!("derive key function");
+
     match DeriveKey::allocate(AlgorithmId::EcdhDeriveSharedSecret, KEY_SIZE) {
         Err(e) => Err(e),
         Ok(operation) => {
+
             trace_println!("set key for ecdsa");
-            operation.set_key(&dh.ecdh_keypair)?;
+            // operation.set_key(&dh.ecdh_keypair)?;
             trace_println!("Allocate Generic secret");
+            dh.ecdh_keypair = TransientObject::allocate(TransientObjectType::EcdhKeypair, KEY_SIZE).unwrap();
+            trace_println!("populate keys");
+            dh.ecdh_keypair
+                .populate(&[attr_ecc.into(), ecc_x.into(), ecc_y.into(), private_value.into()]);
+            trace_println!("setKey");
+            operation.set_key(&dh.ecdh_keypair)?;
+
+            trace_println!("derive keys operation");
             let mut derived_key =
             TransientObject::allocate(TransientObjectType::GenericSecret, KEY_SIZE).unwrap();
-            trace_println!("derive keys operation");
+
+
+            trace_println!("derive key");
             operation.derive(&[ecc_x.into(), ecc_y.into()], &mut derived_key);
             let key_size = derived_key
                 .ref_attribute(AttributeId::SecretValue, p1.buffer())

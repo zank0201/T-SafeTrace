@@ -1,5 +1,5 @@
 use optee_utee::{
-    ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
+trace_println,
 };
 
 use optee_utee::{AlgorithmId, Asymmetric,OperationMode, ObjectHandle, AttributeId, AttributeMemref, AttributeValue, Random, AE};
@@ -8,8 +8,9 @@ use optee_utee::{TransientObject, TransientObjectType, ElementId};
 use proto::{Command, BUFFER_SIZE, KEY_SIZE, TAG_LEN};
 use crate::storage::data::*;
 pub use crate::crypto::context::{Operations, User, Geolocation};
-use crate::ta_keygen::*;
+// use ta_keygen::*;
 use rustc_hex::{FromHex, ToHex};
+
 /// function generating crypto keypairs
 ///
 pub fn ecdsa_keypair(ecdsa: &mut Operations, params: &mut Parameters) -> Result<()> {
@@ -17,56 +18,58 @@ pub fn ecdsa_keypair(ecdsa: &mut Operations, params: &mut Parameters) -> Result<
     //p1 = userid
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
     let mut p2 = unsafe { params.2.as_memref().unwrap() };
-    let mut p3 = unsafe { params.3.as_memref().unwrap() };
 
-    let mut private_buffer = p1.buffer();
-    let mut public_x_buffer = p2.buffer();
-    let mut public_y_buffer = p3.buffer();
+    let mut private_buffer = [0u8;32];
+    let mut public_x_buffer = p1.buffer();
+    let mut public_y_buffer = p2.buffer();
     trace_println!("allocating object mememory");
     // #[cfg(feature = "non-optee")]
-    ecdh_keypairs(ecdsa);
+    // ecdh_keypairs(ecdsa);
     trace_println!("we are going to keypair");
     // SecretKey::random(CryptoRng + RngCore);
     let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
-    match TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE) {
-        Err(e) => Err(e),
-        Ok(keypair) => {
-            keypair
-                .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
-            let mut private_key_size = keypair
-                .ref_attribute(AttributeId::EccPrivateValue, &mut private_buffer)
-                .unwrap();
-            let mut private_res = vec![0u8; private_key_size as usize];
-            private_res.copy_from_slice(&private_buffer[..private_key_size as usize]);
+    ecdsa.ecdsa_keypair = TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE).unwrap();
 
-            let mut eccx_size = keypair
-                .ref_attribute(AttributeId::EccPublicValueX, &mut public_x_buffer)
-                .unwrap();
+    trace_println!("generate_key");
 
-            let mut public_x_res = vec![0u8; eccx_size as usize];
-            //
-            public_x_res.copy_from_slice(&public_x_buffer[..eccx_size as usize]);
+    ecdsa.ecdsa_keypair
+        .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
+
+    trace_println!("private key implementation");
+    let mut private_key_size = ecdsa.ecdsa_keypair
+        .ref_attribute(AttributeId::EccPrivateValue, &mut private_buffer)
+        .unwrap();
+    let mut private_res = vec![0u8; private_key_size as usize];
+    private_res.copy_from_slice(&private_buffer[..private_key_size as usize]);
+
+    let mut eccx_size = ecdsa.ecdsa_keypair
+        .ref_attribute(AttributeId::EccPublicValueX, &mut public_x_buffer)
+        .unwrap();
+
+    let mut public_x_res = vec![0u8; eccx_size as usize];
+    //
+    public_x_res.copy_from_slice(&public_x_buffer[..eccx_size as usize]);
 
 
-            p0.set_a(eccx_size as u32);
-            //
-            let mut y_keysize = keypair
-                .ref_attribute(AttributeId::EccPublicValueY, &mut public_y_buffer)
-                .unwrap();
-            p0.set_b(y_keysize as u32);
-            let mut public_y_res = vec![0u8; y_keysize as usize];
-            //
-            public_y_res.copy_from_slice(&public_y_buffer[..y_keysize as usize]);
+    p0.set_a(eccx_size as u32);
+    //
+    let mut y_keysize = ecdsa.ecdsa_keypair
+        .ref_attribute(AttributeId::EccPublicValueY, &mut public_y_buffer)
+        .unwrap();
+    p0.set_b(y_keysize as u32);
+    let mut public_y_res = vec![0u8; y_keysize as usize];
+    //
+    public_y_res.copy_from_slice(&public_y_buffer[..y_keysize as usize]);
 
-            // let mut new_data: User = User::default();
-            // //e
-            ecdsa.user_details.public_x =  public_x_res.clone();
-            ecdsa.user_details.public_y = public_y_res.clone();
-            ecdsa.user_details.private_key = private_res.clone();
-            // public_x_res.append(&mut public_y_res);
-            Ok(())
-        }
-    }
+    // let mut new_data: User = User::default();
+    // //e
+    ecdsa.user_details.public_x =  public_x_res.clone();
+    ecdsa.user_details.public_y = public_y_res.clone();
+    ecdsa.user_details.private_key = private_res.clone();
+    // public_x_res.append(&mut public_y_res);
+    Ok(())
+
+
 
 
 }
@@ -85,8 +88,8 @@ pub fn generate_sign(ecdsa: &mut Operations, params: &mut Parameters) -> Result<
     let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
 
     trace_println!("allocating signing operation");
-    trace_println!("look at private val: {:?}", &ecdsa.user_details.private_key);
-    match Asymmetric::allocate(AlgorithmId::EcdsaP256, OperationMode::Sign, 256) {
+
+    match Asymmetric::allocate(AlgorithmId::EcdsaP256, OperationMode::Sign, KEY_SIZE) {
         Err(e) => Err(e),
         Ok(operation) => {
             match TransientObject::allocate(TransientObjectType::EcdsaKeypair, KEY_SIZE){
@@ -98,7 +101,6 @@ pub fn generate_sign(ecdsa: &mut Operations, params: &mut Parameters) -> Result<
                     operation.set_key(&ecdsa_keypair);
                     operation
                         .sign_digest(&[], &msg_digest, &mut sign_buff);
-                    trace_println!("The generated signature {:?}", &sign_buff);
                     Ok(())
 
                 }
@@ -113,35 +115,11 @@ pub fn generate_sign(ecdsa: &mut Operations, params: &mut Parameters) -> Result<
 
 
 }
-    // setting ket for sign
-    // trace_println!("Setting key for signing");
-    // // using our key pair generated
-    //
-    // ecdsa.ecdsa_op.set_key(&ecdsa.ecdsa_keypair)?;
-    //
-    // trace_println!("generate signing key");
-    // ecdsa.ecdsa_op.
-    //
-    //     sign_digest(&[], &msg_digest, &mut sign_buff);
-    // trace_println!("The generated signature {:?}", &sign_buff);
-
-    // trace_println!("Implement verify");
-    // ecdsa.ecdsa_op = Asymmetric::allocate(AlgorithmId::EcdsaP256, OperationMode::Verify, 256).unwrap();
-    // trace_println!("set key operation");
-    // ecdsa.ecdsa_op.set_key(&ecdsa.ecdsa_keypair)?;
-    // trace_println!("verify");
-    // //TODO add verify to OTP verification
-    // ecdsa.ecdsa_op.
-    //     verify_digest(&[], &msg_digest, &sign_buff);
-    // trace_println!("Successful verification");
-
-
-//     Ok(())
-// }
 
 /// Function verifies signature
 ///
 pub fn verify(ecdsa: &mut Operations, params: &mut Parameters) -> Result<()> {
+
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
     let mut signature_buff = p0.buffer();

@@ -3,6 +3,8 @@
 use optee_utee::{
     ta_close_session, ta_create, ta_destroy, ta_invoke_command, ta_open_session, trace_println,
 };
+#[macro_use]
+extern crate lazy_static;
 use optee_utee::{AlgorithmId, Mac};
 use optee_utee::{AttributeId, AttributeMemref, TransientObject, TransientObjectType};
 use optee_utee::{Error, ErrorKind, Parameters, Result};
