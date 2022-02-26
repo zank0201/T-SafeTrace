@@ -20,6 +20,8 @@ pub enum Command {
     Read,
     Write,
     Delete,
+    FindMatch,
+    Report,
 
 
     Unknown,
@@ -52,6 +54,8 @@ impl From<u32> for Command {
             15 => Command::Read,
             16 => Command::Write,
             17 => Command::Delete,
+            18 => Command::FindMatch,
+            19 => Command::Report,
             _ => Command::Unknown,
         }
     }
@@ -74,6 +78,38 @@ impl From<u32> for Mode {
     }
 }
 
+// pub enum Status {
+//     Failed,
+//     Passed,
+//     Unknown,
+// }
+//
+// impl From<u32> for Status {
+//     #[inline]
+//     fn from(value: u32) -> Status {
+//         match value {
+//             0 => Status::Failed,
+//             1 => Status::Passed,
+//             _ => Status::Unknown,
+//         }
+//     }
+// }
+pub enum StorageMode {
+    DerivedKeys,
+    UserData,
+    Unknown,
+}
+
+impl From<u32> for StorageMode {
+    #[inline]
+    fn from(value: u32) -> StorageMode {
+        match value {
+            0 => StorageMode::DerivedKeys,
+            1 => StorageMode::UserData,
+            _ => StorageMode::Unknown,
+        }
+    }
+}
 // Key size 20 bytes
 pub const KEY_SIZE: usize = 256;
 pub const K_LEN: usize = 32;

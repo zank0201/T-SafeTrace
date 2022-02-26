@@ -63,6 +63,9 @@ pub fn get_hotp(hotp: &mut Operations, params: &mut Parameters) -> Result<()> {
     let hotp_val = truncate(&mut mac);
     let mut p = unsafe { params.0.as_value().unwrap() };
     p.set_a(hotp_val);
+    drop(&hotp.counter);
+    drop(&hotp.key);
+    drop(&hotp.key_len);
     Ok(())
 }
 

@@ -7,13 +7,15 @@ use optee_utee::{Random};
 use proto::Command;
 
 
-pub fn random_number_generate(params: &mut Parameters) -> Result<()> {
-    let mut p = unsafe { params.0.as_memref().unwrap()};
-    let mut buf = vec![0; p.buffer().len() as usize];
-    buf.copy_from_slice(p.buffer());
+pub fn random_number_generate() -> Result<Vec<u8>> {
+    // let mut p = unsafe { params.0.as_memref().unwrap()};
+    // let mut buf = vec![0; p.buffer().len() as usize];
+    // buf.copy_from_slice(p.buffer());
 
-    Random::generate(buf.as_mut() as _);
-    p.buffer().copy_from_slice(&buf);
+    let mut buffer = [0u8;12];
 
-    Ok(())
+    Random::generate(buffer.as_mut() as _);
+    // p.buffer().copy_from_slice(&buf);
+
+    Ok(buffer.to_vec())
 }

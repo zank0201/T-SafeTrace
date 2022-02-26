@@ -26,7 +26,7 @@ const callServer = function(request, callback) {
     });
 };
 
-const client = jaysonBrowserClient(callServer, {});
+const client = new jaysonBrowserClient(callServer, {});
 // generate otp
 //TODO add verify window
 /**
@@ -67,6 +67,7 @@ function deriveKeys(taskpubkey,privatekey ) {
  * @returns {String} encrypted data
  */
 function encrypt(derivedkey, data) {
+
     let key = forge.util.hexToBytes(derivedkey);
     let iv = forge.random.getBytesSync(12);
     let cipher = forge.cipher.createCipher('AES-GCM', key);
@@ -74,8 +75,12 @@ function encrypt(derivedkey, data) {
     cipher.update(forge.util.createBuffer(data));
     cipher.finish();
     //encrypted data result
+    // console.log("print tag");
+    // console.log("tag length: " + (cipher.mode.tag.toHex().length));
+    // console.log("print result " + cipher.output.toHex().length);
     let result = cipher.output.putBuffer(cipher.mode.tag).putBytes(iv);
 // outputs encrypted hex
+//     console.log("result len" + result.toHex().length);
     return result.toHex();
 
 }
@@ -88,8 +93,10 @@ function encrypt(derivedkey, data) {
  */
 
 function decrypt(derivedkey, enc_data) {
+
     let key = forge.util.hexToBytes(derivedkey);
     let msgBuf = Buffer.from(enc_data,"hex");
+    console.log("msg buf" + msgBuf.length);
     let iv = forge.util.createBuffer(msgBuf.slice(-12));
     let tag = forge.util.createBuffer(msgBuf.slice(-28, -12));
     let decipher = forge.cipher.createDecipher('AES-GCM', key);
@@ -163,21 +170,23 @@ async function getEncryptionKey(client_pub) {
  * @param data
  * @returns {Promise<void>}
  */
-async function addData(userId) {
+async function addData(userId, data) {
     let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
     try {
         let taskPubKey = await getEncryptionKey(client_pub);
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
         let encryptedUserId = encrypt(derivedKey, userId);
-        console.log(encryptedUserId);
-        // let encryptedData = encrypt(derivedkey, data);
+        let encryptedData = encrypt(derivedKey, data);
+
+        console.log("data  " + encryptedData);
+
 
         const addPersonalDataResult = await new Promise((resolve, reject) => {
           client.request('addPersonalData', {
             encryptedUserId: encryptedUserId,
-            // encryptedData: encryptedData,
-            userPubKey: client_pub},
+            encryptedData: encryptedData,
+            userPubKey: derivedKey},
               (err, response) => {
                 if (err) {
                   reject(err);
@@ -200,10 +209,89 @@ async function addData(userId) {
         }
         }
 
+async function findMatch(userId){
+
+    let {private_buffer, client_pub} = ClientKeys();
+
+    try {
+        let taskPubKey = await getEncryptionKey(client_pub);
+        let derivedKey = deriveKeys(taskPubKey, private_buffer);
+        let encryptedUserId = encrypt(derivedKey, userId);
+
+        const findMatchResult = await new Promise((resolve, reject) => {
+            client.request('findMatch', {
+                    encryptedUserId: encryptedUserId,
+                    userPubKey: derivedKey},
+                (err, response) => {
+                    if (err) {
+                        reject(err);
+                        return;
+                    }
+                    resolve(response);
+                });
+        });
+
+        if(findMatchResult.findMatch.status == 0) {
+            console.log('Find Match operation successful');
+
+            let output = decrypt(derivedKey, findMatchResult.findMatch.encryptedOutput);
+
+            if(output.length){
+                console.log('Find matches:');
+                console.log(output);
+            } else {
+                console.log('No matches');
+            }
+        } else {
+            console.log('Something went wrong. Time to debug...')
+        }
+    } catch(err) {
+        console.log(err);
+        // Or throw an error
+    }
+}
+
 //
 
 //
 // console.log("hey girl");
-let userid = uniqueId();
-console.log(userid);
-addData(userid);
+
+
+let data1 = [
+    {
+        "lat": 40.757339,
+        "lng": -73.985992,
+        "startTS": 1583064001,
+        "endTS": 1583067601,
+        "testResult": false,
+    },
+    {
+        "lat": 40.793840,
+        "lng": -73.956900,
+        "startTS": 1583150401,
+        "endTS": 1583154001,
+        "testResult": false,
+    },
+]
+let data2 = [
+    {
+        "lat": 41.757339,
+        "lng": -73.985992,
+        "startTS": 1583064000,
+        "endTS": 1583067600,
+        "testResult": true,
+    },
+    {
+        "lat": 40.793840,
+        "lng": -73.956900,
+        "startTS": 1583150400,
+        "endTS": 1583154000,
+        "testResult": true,
+    },
+]
+
+addData("user1", JSON.stringify(data1)).then(console.log);
+addData("user2", JSON.stringify(data2)).then(console.log);
+// findMatch("user1").then(console.log);
+
+

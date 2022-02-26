@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 //
 use rustc_hex::{FromHex, ToHex};
 pub use proto::{KEY_SIZE};
-pub type SymmetricKey = [u8; KEY_SIZE];
+pub type SymmetricKey = Vec<u8>;
 pub type DHKey = SymmetricKey;
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
@@ -22,60 +22,90 @@ pub const DBC2_MODULO: u32 = 100000000;
 /// #Parameters
 /// Vec<u8>, = public key
 /// DHKey = derived key
-lazy_static! {
-    pub static ref DHKeys: HashMap<Vec<u8>, DHKey> = HashMap::new();
-}
-pub struct Operations {
+// lazy_static! {
+//     pub static ref encryptionkeys: HashMap<Vec<u8>, DHKey> = HashMap::new();
+// }
+
+pub struct NewOperations {
     pub ecdsa_keypair: TransientObject,
     pub ecdh_keypair: TransientObject,
-    // pub ecdh_info: TransientObject,
-    pub ecdsa_op: Asymmetric,
     pub digestop: Digest,
-    //otp
-    pub counter: [u8; 8],
-    pub key: [u8; MAX_KEY_SIZE],
-    pub dh_key: TransientObject,
-    pub key_len: usize,
+    pub ecdsa_op: Asymmetric,
     pub AeOp: AE,
-    pub user_details: User,
-
-
 }
-
-impl Default for Operations {
+impl Default for NewOperations {
     fn default() -> Self {
         Self {
             ecdsa_keypair: TransientObject::null_object(),
-
+            // private_key: [0u8; 32],
+            // public_x: [0u8; 32],
+            // public_y: [0u8;32],
             ecdh_keypair: TransientObject::null_object(),
             // ecdh_info,
             ecdsa_op: Asymmetric::null(),
             digestop: Digest::allocate(AlgorithmId::Sha256).unwrap(),
+            // // otp
+            // counter: [0u8; 8],
+            // key: [0u8; MAX_KEY_SIZE],
+            // // dh_key: TransientObject::null_object(),
+            // key_len: 0,
+            AeOp: AE::null(),
+            // user_details: User::default(),
+
+        }
+    }
+}
+pub struct Operations {
+    // pub ecdsa_keypair: TransientObject,
+    // pub ecdh_keypair: TransientObject,
+
+    // pub ecdh_info: TransientObject,
+    // pub ecdsa_op: Asymmetric,
+    // pub digestop: Digest,
+    //otp
+    pub counter: [u8; 8],
+    pub key: [u8; MAX_KEY_SIZE],
+    // pub dh_key: TransientObject,
+    pub key_len: usize,
+
+    // pub user_details: User,
+
+
+}
+const PREFIX: &'static [u8; 19] = b"Enigma User Message";
+
+impl Default for Operations {
+    fn default() -> Self {
+        Self {
+            // ecdsa_keypair: TransientObject::null_object(),
+            // ecdh_keypair: TransientObject::null_object(),
+            // ecdh_info,
+            // ecdsa_op: Asymmetric::null(),
+            // digestop: Digest::allocate(AlgorithmId::Sha256).unwrap(),
             // otp
             counter: [0u8; 8],
             key: [0u8; MAX_KEY_SIZE],
-            dh_key: TransientObject::null_object(),
+            // dh_key: TransientObject::null_object(),
             key_len: 0,
-            AeOp: AE::null(),
-            user_details: User::default(),
+            // user_details: User::default(),
 
         }
     }
 }
 
-///Struct [`User`] keeps Serialized data for user
-#[derive(Default)]
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct User {
-    pub public_x: Vec<u8>,
-    pub public_y: Vec<u8>,
-    // derived_key: String,
-    pub private_key: Vec<u8>,
-    //
-    pub Geolocation_data: Geolocation,
-
-}
-
+// ///Struct [`User`] keeps Serialized data for user
+// #[derive(Default)]
+// #[derive(Serialize, Deserialize, Clone, Debug)]
+// pub struct User {
+//     pub public_x: Vec<u8>,
+//     pub public_y: Vec<u8>,
+//     // derived_key: String,
+//     pub private_key: Vec<u8>,
+//     //
+//     pub Geolocation_data: Geolocation,
+//
+// }
+//
 #[derive(Serialize, Deserialize, Clone, Debug)]
 // #[serde(tag = "type")]
 pub struct Geolocation {
@@ -85,19 +115,19 @@ pub struct Geolocation {
     endTS: i32,
     testResult: bool
 }
-impl Default for Geolocation {
-    fn default() -> Self {
-        Self {
-            lat: 0.0,
-            lng: 0.0,
-            startTS: 0,
-            endTS: 0,
-            testResult: false,
-        }
-
-        }
-
-}
+// impl Default for Geolocation {
+//     fn default() -> Self {
+//         Self {
+//             lat: 0.0,
+//             lng: 0.0,
+//             startTS: 0,
+//             endTS: 0,
+//             testResult: false,
+//         }
+//
+//         }
+//
+// }
 // pub struct Keypair {
 //     pubkey: (String),
 //     private_key: String,
@@ -118,3 +148,7 @@ impl Default for Geolocation {
 //     // }
 //
 // }
+use std::convert::TryInto;
+pub fn vector_array(slice_array:&[u8]) -> [u8;32] {
+    slice_array.try_into().expect("sliice incorrect length")
+}

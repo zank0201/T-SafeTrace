@@ -1,3 +1,2 @@
-pub mod authenticated;
-pub mod randomGen;
+pub mod report;
 pub mod storage;

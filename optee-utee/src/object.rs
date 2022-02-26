@@ -274,6 +274,7 @@ impl ObjectHandle {
 #[repr(u32)]
 pub enum ObjectStorageConstants {
     Private = 0x00000001,
+    Protected = 0x00000003,
     IllegalValue = 0x7FFFFFFF,
 }
 
