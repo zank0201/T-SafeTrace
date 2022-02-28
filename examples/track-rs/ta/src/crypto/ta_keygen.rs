@@ -1,15 +1,19 @@
 // Need to generate a random key
 // that can be authenticated with the data we have
-use std::collections::HashMap;
+
 pub use crate::crypto::context::*;
 use optee_utee::trace_println;
 use optee_utee::{AlgorithmId, DeriveKey};
 use optee_utee::{AttributeId, AttributeValue, AttributeMemref, ElementId, TransientObject, TransientObjectType};
-use rustc_hex::{FromHex, ToHex};
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use proto::{Command, KEY_SIZE};
-use crate::storage::data::*;
+use crate::storage::{data::*, trusted_keys::*};
 use std::sync::{Arc, Mutex};
+use std::collections::BTreeMap;
+use rustc_hex::{FromHex, ToHex};
+// use rustc_hex::{FromHex, ToHex};
+lazy_static! { pub static ref DH_KEYS: Mutex<BTreeMap<PubKey, DHKey>> = Mutex::new(BTreeMap::new()); }
+
 //
 // pub fn ecdh_keypairs(key: &mut Operations) -> Result<()> {
 //     trace_println!("allocate transient object to ecdh keypair");
@@ -76,6 +80,15 @@ pub fn generate_key(user_pub: &[u8], private_value: &[u8]) -> Result<()> {
                 .unwrap();
             let mut derived_res = vec![0u8; key_size as usize];
             derived_res.copy_from_slice(&derived_buffer[..key_size as usize]);
+
+            let derived_val = derived_array(&derived_res);
+            let pub_array = user_pub.to_hex();
+            // trace_println!("io string {:?}", &user_string);
+            DH_KEYS.lock_expect("DH_KEYS").insert(PubKey(pub_array.into()), derived_val);
+
+            // map.insert_keys(String::from_utf8(derived_res), new_array, derived_res);
+
+
 
             trace_println!("done deriving");
             Ok(())

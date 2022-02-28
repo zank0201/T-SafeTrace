@@ -49,14 +49,15 @@ function deriveKeys(taskpubkey,privatekey ) {
     let clientkey = ec.keyFromPrivate(privatekey, 'hex');
     let enclavekey = ec.keyFromPublic(taskpubkey, 'hex');
     let sharedPoints = enclavekey.getPublic().mul(clientkey.getPrivate());
-    let y = 0x02 | (sharedPoints.getY().isOdd()? 1 : 0)
+    // let derivedkey = sharedPoints.getX();
+    // let y = 0x02 | (sharedPoints.getY().isOdd()? 1 : 0)
     let x = sharedPoints.getX();
-    let buffer_y = Buffer.from([y]);
+    // let buffer_y = Buffer.from([y]);
     let buffer_x = x.toArrayLike(Buffer, 'be', 32);
-    let sha256 = forge.md.sha256.create();
-    sha256.update(buffer_y.toString('binary'));
-    sha256.update(buffer_x.toString('binary'));
-    return sha256.digest().toHex();
+    // let sha256 = forge.md.sha256.create();
+    // sha256.update(buffer_x.toString('binary'));
+    // sha256.update(buffer_x.toString('binary'));
+    return x.toString('hex');
 
 }
 /**
@@ -176,6 +177,7 @@ async function addData(userId, data) {
     try {
         let taskPubKey = await getEncryptionKey(client_pub);
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
+        console.log("derived key: ", derivedKey);
         let encryptedUserId = encrypt(derivedKey, userId);
         let encryptedData = encrypt(derivedKey, data);
 
@@ -186,7 +188,7 @@ async function addData(userId, data) {
           client.request('addPersonalData', {
             encryptedUserId: encryptedUserId,
             encryptedData: encryptedData,
-            userPubKey: derivedKey},
+            userPubKey: client_pub},
               (err, response) => {
                 if (err) {
                   reject(err);
@@ -221,7 +223,7 @@ async function findMatch(userId){
         const findMatchResult = await new Promise((resolve, reject) => {
             client.request('findMatch', {
                     encryptedUserId: encryptedUserId,
-                    userPubKey: derivedKey},
+                    userPubKey: client_pub},
                 (err, response) => {
                     if (err) {
                         reject(err);
@@ -292,6 +294,6 @@ let data2 = [
 
 addData("user1", JSON.stringify(data1)).then(console.log);
 addData("user2", JSON.stringify(data2)).then(console.log);
-// findMatch("user1").then(console.log);
+findMatch("user1").then(console.log);
 
 

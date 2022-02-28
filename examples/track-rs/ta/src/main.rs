@@ -121,9 +121,9 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
 //         Command::Write => {
 //             return create_raw_object(sess_ctx,_params);
 //         }
-//         Command::FindMatch => {
-//             return read_raw_object(_params);
-//         }
+        Command::FindMatch => {
+            return find_match_optee(_sess_ctx, _params);
+        }
 //         Command::Delete => {
 //             return delete_object(_params);
 //         }

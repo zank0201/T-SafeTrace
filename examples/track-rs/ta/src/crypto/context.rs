@@ -1,16 +1,20 @@
+// #![no_std]
 use optee_utee::{TransientObject, ObjectInfo, ObjectHandle, TransientObjectType, AE, AlgorithmId, ElementId, Asymmetric, Digest};
 use std::collections::HashMap;
 
 use derive_new::new;
-use std::{marker, mem, ptr};
+// use std::{marker, mem, ptr};
+
 
 use serde_json::{Value, json};
 use serde::{Deserialize, Serialize};
 // use rmp_serde::{Deserializer, Serializer};
 //
+
+use std::sync::{Arc, Mutex, MutexGuard};
 use rustc_hex::{FromHex, ToHex};
 pub use proto::{KEY_SIZE};
-pub type SymmetricKey = Vec<u8>;
+pub type SymmetricKey = [u8;32];
 pub type DHKey = SymmetricKey;
 pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
@@ -109,11 +113,11 @@ impl Default for Operations {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 // #[serde(tag = "type")]
 pub struct Geolocation {
-    lat: f64,
-    lng: f64,
-    startTS: i32,
-    endTS: i32,
-    testResult: bool
+    pub lat: f64,
+    pub lng: f64,
+    pub startTS: i32,
+    pub endTS: i32,
+    pub testResult: bool
 }
 // impl Default for Geolocation {
 //     fn default() -> Self {
@@ -149,6 +153,26 @@ pub struct Geolocation {
 //
 // }
 use std::convert::TryInto;
-pub fn vector_array(slice_array:&[u8]) -> [u8;32] {
+pub fn vector_array(slice_array:&[u8]) -> [u8;64] {
     slice_array.try_into().expect("sliice incorrect length")
+}
+pub fn derived_array(slice_array:&[u8]) -> [u8;32] {
+    slice_array.try_into().expect("sliice incorrect length")
+}
+pub trait LockExpectMutex<T> {
+    /// See trait documentation. a shortcut for `lock()` and `expect()`
+    fn lock_expect(&self, name: &str) -> MutexGuard<T>;
+}
+
+impl<T> LockExpectMutex<T> for Mutex<T> {
+    fn lock_expect(&self, name: &str) -> MutexGuard<T> { self.lock().unwrap_or_else(|_| panic!("{} mutex is poison", name)) }
+}
+
+
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PubKey(pub String);
+use std::borrow::Borrow;
+
+impl Borrow<str> for PubKey {
+    fn borrow(&self) -> &str { &self.0 }
 }

@@ -67,7 +67,6 @@ impl Cipher {
                         tmp.copy_from_slice(&ciph);
 
                         // tag_buffer.copy_from_slice(&tag);
-                        trace_println!("tag after encryption: {:?} and length{}", &tag_buffer, tag_buffer.len());
                         tmp.extend(tag_buffer);
                         tmp.extend(nonce);
                     }
@@ -94,7 +93,7 @@ impl Cipher {
                 ae.AeOp.set_key(&key_object)?;
                 ae.AeOp.init(&data.nonce, TAG_LEN * 8, 0, 0)?;
                 // ae.AeOp.update_aad(&aad);
-                trace_println!("tag buffer {:?}", &data.tag);
+
                 match ae.AeOp.decrypt_final(&data.text, &mut ciph, &data.tag) {
                     Err(e) => {
                         trace_println!("decryption error: {}", e);
@@ -106,7 +105,7 @@ impl Cipher {
                         //
                         // tag.copy_from_slice(&id_tag_buffer);
                         // status = true;
-                        trace_println!("ciph {:?}", &ciph)
+
                     }
                 }
                 Ok(ciph)
@@ -114,3 +113,5 @@ impl Cipher {
         }
     }
 }
+
+

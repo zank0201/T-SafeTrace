@@ -9,8 +9,6 @@ use proto::{Command, BUFFER_SIZE, KEY_SIZE, TAG_LEN};
 use crate::storage::{data::*, trusted_keys::KeyStorage};
 use crate::crypto::ta_keygen::*;
 pub use crate::crypto::context::*;
-// use ta_keygen::*;
-use rustc_hex::{FromHex, ToHex};
 
 /// function generating crypto keypairs
 ///@params:
