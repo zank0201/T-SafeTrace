@@ -1,4 +1,5 @@
-const { authenticator, totp } = require('otplib');
+const {totp } = require('otplib/index.js');
+// const notp = require('notp');
 const axios = require('axios');
 const jaysonBrowserClient = require('jayson/lib/client/browser');
 const JSON_RPC_Server = 'http://127.0.0.1:8080';
@@ -34,11 +35,7 @@ const client = new jaysonBrowserClient(callServer, {});
  * @param secret
  * @returns {String} 8 digit totp
  */
-function GenerateOtp(secret) {
-    totp.options = { digits: 8 };
-    const token = totp.generate(secret);
-    return token;
-}
+
 //TODO implement ecdh
 function deriveKeys(taskpubkey,privatekey ) {
     console.log("entered derive keys function");
@@ -54,9 +51,9 @@ function deriveKeys(taskpubkey,privatekey ) {
     let x = sharedPoints.getX();
     // let buffer_y = Buffer.from([y]);
     let buffer_x = x.toArrayLike(Buffer, 'be', 32);
-    // let sha256 = forge.md.sha256.create();
-    // sha256.update(buffer_x.toString('binary'));
-    // sha256.update(buffer_x.toString('binary'));
+    let sha256 = forge.md.sha256.create();
+    sha256.update(buffer_x.toString('binary'));
+    console.log("buffer ", buffer_x);
     return x.toString('hex');
 
 }
@@ -136,7 +133,44 @@ function ClientKeys() {
 function uniqueId() {
     return '_' + Math.random().toString(36).substr(2, 9);
 }
+function GenerateOtp(secret, enclavetotp) {
+    console.log("from enclave ", enclavetotp);
 
+    totp.options = { digits: 6,
+        algorithm: "sha1", encoding: 'hex', window: 5}
+
+    let token = totp.generate(secret);
+    let isvalid = totp.check(enclavetotp, secret);
+    // let opt = {window: 200, counter: 50};
+    // let token = notp.totp.gen(secret,{} );
+
+    console.log(token);
+    console.log(isvalid);
+
+
+// valid token
+
+    return enclavetotp;
+
+}
+
+async function getTotpKey(client_pub) {
+    const getTotpResult = await new Promise((resolve, reject) => {
+        client.request('newTotp', {userPubKey: client_pub},
+            (err, response) => {
+                if (err) {
+                    reject(err);
+                    return;
+                }
+                resolve(response);
+            });
+    });
+
+    const {result, id} = getTotpResult;
+    const {token} = result;
+    return token;
+
+}
 async function getEncryptionKey(client_pub) {
 
         const getEncryptionKeyResult = await new Promise((resolve, reject) => {
@@ -177,11 +211,12 @@ async function addData(userId, data) {
     try {
         let taskPubKey = await getEncryptionKey(client_pub);
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
-        console.log("derived key: ", derivedKey);
+        let totp = await getTotpKey(client_pub);
+        let api_totp = GenerateOtp(derivedKey, totp);
         let encryptedUserId = encrypt(derivedKey, userId);
         let encryptedData = encrypt(derivedKey, data);
 
-        console.log("data  " + encryptedData);
+
 
 
         const addPersonalDataResult = await new Promise((resolve, reject) => {

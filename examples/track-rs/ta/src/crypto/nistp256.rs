@@ -7,7 +7,7 @@ use optee_utee::{Error, ErrorKind, Parameters, Result};
 use optee_utee::{TransientObject, TransientObjectType, ElementId};
 use proto::{Command, BUFFER_SIZE, KEY_SIZE, TAG_LEN};
 use crate::storage::{data::*, trusted_keys::KeyStorage};
-use crate::crypto::ta_keygen::*;
+use crate::crypto::{ta_keygen::*, ta_hotp::*};
 pub use crate::crypto::context::*;
 
 /// function generating crypto keypairs
@@ -89,7 +89,7 @@ pub fn ecdsa_keypair(params: &mut Parameters) -> Result<()> {
     public_y_res.copy_from_slice(&ecc_y_buffer[..y_keysize as usize]);
 
     // call derive key
-    generate_key(&client_key, &private_res);
+    generate_key(&client_key, &private_res)?;
     // call generate sign
 
     let sig = generate_sign(&mut ecdsa, sign_buffer).unwrap();

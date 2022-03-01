@@ -4,6 +4,7 @@ use optee_teec::{
     Uuid,
 };
 use proto::{Command, UUID};
+use rustc_hex::{FromHex, ToHex};
 // size of test objects
 const TEST_SIZE: usize = 10;
 const SIZE_K: usize = 20;
@@ -28,9 +29,11 @@ pub fn register_shared_key(session: &mut Session, k: &mut Vec<u8>) -> optee_teec
     Ok(())
 }
 
-pub fn get_hotp(session: &mut Session) -> optee_teec::Result<()> {
+pub fn get_hotp(session: &mut Session, key: &str) -> optee_teec::Result<String> {
+    let mut user_pub = &key[2..].from_hex().unwrap();
     let p0 = ParamValue::new(0, 0, ParamType::ValueOutput);
-    let mut operation = Operation::new(0, p0, ParamNone, ParamNone, ParamNone);
+    let p1 = ParamTmpRef::new_input(&user_pub);
+    let mut operation = Operation::new(0, p0, p1, ParamNone, ParamNone);
     // for i in 0..TEST_SIZE {
         session.invoke_command(Command::GetHOTP as u32, &mut operation)?;
         let (p0, _, _, _) = operation.parameters();
@@ -46,5 +49,5 @@ pub fn get_hotp(session: &mut Session) -> optee_teec::Result<()> {
         //     return Err(Error::new(ErrorKind::Generic));
         // }
     // }
-    Ok(())
+    Ok(hotp_value.to_string())
 }

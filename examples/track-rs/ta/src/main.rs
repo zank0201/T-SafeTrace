@@ -68,9 +68,9 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
         // Command::RegisterSharedKey => {
         //     return register_shared_key(sess_ctx, _params);
         // }
-        // Command::GetHOTP => {
-        //     return get_hotp(sess_ctx, _params);
-        // }
+        Command::GetHOTP => {
+            return get_hotp(_params);
+        }
         // Command::DeriveKey => {
         //     return generate_key(sess_ctx, _params);
         // }
