@@ -43,8 +43,8 @@ pub fn add_personal_data(input: IpcInputData, session: &mut Session) -> Response
     let encrypted_userid = input.encrypted_userid.from_hex()?;
     let encrypted_data = input.encrypted_data.from_hex()?;
     let key = input.user_pub_key;
+    let sig = input.user_sig.from_hex()?;
 
-    println!("encrypted data: {:?}", &encrypted_data.len());
 
     let mut useridlen = &encrypted_userid[..encrypted_userid.len()-28];
     let mut data_len = &encrypted_data[..encrypted_data.len()-28];
@@ -52,7 +52,7 @@ pub fn add_personal_data(input: IpcInputData, session: &mut Session) -> Response
     let mut id_ciph = vec![0x00u8; useridlen.len()];
     let mut data_ciph = vec![0x00u8; data_len.len()];
 
-    let user_stat = authenticated::add_data(&mut *session,&encrypted_userid, &key, &encrypted_data).unwrap();
+    let user_stat = authenticated::add_data(&mut *session,&encrypted_userid, &key, &encrypted_data, &sig).unwrap();
     // let data_stat = authenticated::decrypt(&mut *session, 1, &encrypted_data, &key, &mut data_ciph).unwrap();
     let result;
     if (user_stat)==0 {
@@ -78,7 +78,6 @@ pub fn find_match(session: &mut Session, input: IpcInputMatch) -> ResponseResult
 
 
 
-    println!("entered findmatch");
     let result = IpcResults::FindMatch { status: Status::Passed, encryptedOutput: authenticated_output};
     Ok(IpcResponse::FindMatch { result })
 }

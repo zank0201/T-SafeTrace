@@ -45,35 +45,26 @@ pub fn generate_key(user_pub: &[u8], private_value: &[u8]) -> Result<()> {
 
     let publicX_att = AttributeMemref::from_ref(AttributeId::EccPublicValueX, &ecc_x);
     let publicY_att = AttributeMemref::from_ref(AttributeId::EccPublicValueY, &ecc_y);
-    trace_println!("allocate object");
     //call private key from struct
 
     let private_value = AttributeMemref::from_ref(AttributeId::EccPrivateValue, &private_value);
-    trace_println!("curve att");
     let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
     let mut derived_buffer = [0u8;65];
-    trace_println!("derive key function");
 
     match DeriveKey::allocate(AlgorithmId::EcdhDeriveSharedSecret, KEY_SIZE) {
         Err(e) => Err(e),
         Ok(operation) => {
 
-            trace_println!("set key for ecdsa");
             // operation.set_key(&dh.ecdh_keypair)?;
-            trace_println!("Allocate Generic secret");
             let mut dh_keypair = TransientObject::allocate(TransientObjectType::EcdhKeypair, KEY_SIZE).unwrap();
-            trace_println!("populate keys");
             dh_keypair
                 .populate(&[attr_ecc.into(), publicX_att.into(), publicY_att.into(), private_value.into()]);
-            trace_println!("setKey");
             operation.set_key(&dh_keypair)?;
 
-            trace_println!("derive keys operation");
             let mut derived_key =
             TransientObject::allocate(TransientObjectType::GenericSecret, KEY_SIZE).unwrap();
 
 
-            trace_println!("derive key");
             operation.derive(&[publicX_att.into(), publicY_att.into()], &mut derived_key);
             let mut key_size = derived_key
                 .ref_attribute(AttributeId::SecretValue, &mut derived_buffer)
@@ -82,7 +73,6 @@ pub fn generate_key(user_pub: &[u8], private_value: &[u8]) -> Result<()> {
             derived_res.copy_from_slice(&derived_buffer[..key_size as usize]);
 
             let derived_val = derived_array(&derived_res);
-            trace_println!("derived_val {:?}", &derived_val);
             let pub_array = user_pub.to_hex();
             // trace_println!("io string {:?}", &user_string);
             DH_KEYS.lock_expect("DH_KEYS").insert(PubKey(pub_array.into()), derived_val);

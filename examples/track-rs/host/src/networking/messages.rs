@@ -109,6 +109,7 @@ pub struct IpcInputData {
     #[serde(rename = "encryptedUserId")] pub encrypted_userid: String,
     #[serde(rename = "encryptedData")] pub encrypted_data: String,
     #[serde(rename = "userPubKey")] pub user_pub_key: String,
+    #[serde(rename = "taskSign")] pub user_sig: String,
 
 
 }

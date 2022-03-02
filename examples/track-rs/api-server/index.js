@@ -121,7 +121,8 @@ const server = new jayson.Server ({
 
         const id = generateId()
         c[id] = callback;
-        if(args.encryptedUserId && args.userPubKey && args.encryptedData) {
+        if(args.encryptedUserId && args.userPubKey && args.encryptedData
+        && args.taskSign) {
             try {
                 await socket.send(JSON.stringify({
                     id : id,
@@ -130,6 +131,7 @@ const server = new jayson.Server ({
                         encryptedUserId: args.encryptedUserId,
                         encryptedData: args.encryptedData,
                         userPubKey: args.userPubKey,
+                        taskSign: args.taskSign,
                         // dataTag: args.dataTag
                     }
                 }));

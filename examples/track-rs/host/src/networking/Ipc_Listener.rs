@@ -74,10 +74,8 @@ pub fn handle_message(request: Multipart, retries: u32, session: &mut Session) -
             IpcRequest::FindMatch { input } => find_match(&mut *session, input),
             IpcRequest::getTotpKey {userPubKey} => generateTotp(&mut *session, &userPubKey),
         };
-        println!("ipc request entered");
         let msg = IpcMessageResponse::from_response(response_msg.unwrap_or_error(), id);
         responses.push_back(msg.into());
-        println!("push back mmsg");
 
     }
     responses

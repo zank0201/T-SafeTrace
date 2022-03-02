@@ -16,10 +16,11 @@ pub fn add_data(
     user_id: &[u8],
     key: &str,
     data: &[u8],
+    sig: &[u8]
 ) -> optee_teec::Result<u32> {
-    let mut buffer = vec![0u8;data.len() as usize];
+    // let mut buffer = vec![0u8;data.len() as usize];
     let mut user_pub = &key[2..].from_hex().unwrap();
-    let p0 = ParamTmpRef::new_input(&mut buffer);
+    let p0 = ParamTmpRef::new_input(&sig);
     let p1 = ParamTmpRef::new_input(user_id);
 
     let p2 = ParamTmpRef::new_input(&user_pub);

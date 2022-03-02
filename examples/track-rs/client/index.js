@@ -1,5 +1,6 @@
 const {totp } = require('otplib/index.js');
 // const notp = require('notp');
+const readline = require("readline")
 const axios = require('axios');
 const jaysonBrowserClient = require('jayson/lib/client/browser');
 const JSON_RPC_Server = 'http://127.0.0.1:8080';
@@ -53,7 +54,7 @@ function deriveKeys(taskpubkey,privatekey ) {
     let buffer_x = x.toArrayLike(Buffer, 'be', 32);
     let sha256 = forge.md.sha256.create();
     sha256.update(buffer_x.toString('binary'));
-    console.log("buffer ", buffer_x);
+
     return x.toString('hex');
 
 }
@@ -94,7 +95,7 @@ function decrypt(derivedkey, enc_data) {
 
     let key = forge.util.hexToBytes(derivedkey);
     let msgBuf = Buffer.from(enc_data,"hex");
-    console.log("msg buf" + msgBuf.length);
+
     let iv = forge.util.createBuffer(msgBuf.slice(-12));
     let tag = forge.util.createBuffer(msgBuf.slice(-28, -12));
     let decipher = forge.cipher.createDecipher('AES-GCM', key);
@@ -134,41 +135,45 @@ function uniqueId() {
     return '_' + Math.random().toString(36).substr(2, 9);
 }
 function GenerateOtp(secret, enclavetotp) {
-    console.log("from enclave ", enclavetotp);
+
 
     totp.options = { digits: 6,
-        algorithm: "sha1", encoding: 'hex', window: 5}
+        algorithm: "sha1", encoding: 'hex', window: 10}
 
     let token = totp.generate(secret);
+    console.log("generated token ", token);
     let isvalid = totp.check(enclavetotp, secret);
     // let opt = {window: 200, counter: 50};
     // let token = notp.totp.gen(secret,{} );
 
-    console.log(token);
     console.log(isvalid);
 
 
 // valid token
 
-    return enclavetotp;
+    return isvalid;
 
 }
 
-async function getTotpKey(client_pub) {
+async function getTotpKey(client_pub, secret) {
     const getTotpResult = await new Promise((resolve, reject) => {
+        let dataResult = false;
         client.request('newTotp', {userPubKey: client_pub},
             (err, response) => {
                 if (err) {
                     reject(err);
                     return;
                 }
+
                 resolve(response);
             });
+
     });
 
     const {result, id} = getTotpResult;
     const {token} = result;
-    return token;
+    let totpCheck = GenerateOtp(secret, token);
+    return totpCheck;
 
 }
 async function getEncryptionKey(client_pub) {
@@ -186,7 +191,7 @@ async function getEncryptionKey(client_pub) {
 
         const {result, id} = getEncryptionKeyResult;
         const {taskPubKey, sig} = result;
-        return taskPubKey;
+        return {taskPubKey, sig};
 
         // ToDo: verify signature
 
@@ -209,29 +214,42 @@ async function addData(userId, data) {
     let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
     try {
-        let taskPubKey = await getEncryptionKey(client_pub);
+        let {taskPubKey, sig} = await getEncryptionKey(client_pub);
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
-        let totp = await getTotpKey(client_pub);
-        let api_totp = GenerateOtp(derivedKey, totp);
+
+        let totp = await getTotpKey(client_pub, derivedKey);
+
+
+
+
         let encryptedUserId = encrypt(derivedKey, userId);
         let encryptedData = encrypt(derivedKey, data);
 
 
 
 
+
         const addPersonalDataResult = await new Promise((resolve, reject) => {
-          client.request('addPersonalData', {
+
+            if(totp==true){
+            // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
+            // if (api_totp==false) throw "invalid totp";
+            client.request('addPersonalData', {
             encryptedUserId: encryptedUserId,
             encryptedData: encryptedData,
-            userPubKey: client_pub},
+            userPubKey: client_pub,
+              taskSign: sig},
               (err, response) => {
                 if (err) {
                   reject(err);
                   return;
                 }
                 resolve(response);
-              });
+              })}
+
           });
+
+            // getTotpKey(client_pub).then(totp => GenerateOtp(derivedKey, totp));
 
           const {addPersonalData} = addPersonalDataResult;
 
@@ -251,7 +269,7 @@ async function findMatch(userId){
     let {private_buffer, client_pub} = ClientKeys();
 
     try {
-        let taskPubKey = await getEncryptionKey(client_pub);
+        let {taskPubKey, sig} = await getEncryptionKey(client_pub);
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
         let encryptedUserId = encrypt(derivedKey, userId);
 

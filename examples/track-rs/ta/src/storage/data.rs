@@ -176,7 +176,6 @@ pub fn read_raw_object() -> Result<Vec<u8>> {
             let obj_info = object.info()?;
 
             let mut data_buffer = vec![0u8; obj_info.data_size() as usize];
-            trace_println!("length of buffer {}", data_buffer.len());
             let read_bytes = object.read(&mut data_buffer).unwrap();
             if read_bytes != obj_info.data_size() as u32 {
                 return Err(Error::new(ErrorKind::ExcessData));
@@ -214,7 +213,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     let mut user_id = vec![0; p1.buffer().len() as usize];
     user_id.copy_from_slice(p1.buffer());
     let user_pub = p2.buffer();
-
+    let sign = p0.buffer();
 
     // let pub_array = vector_array(&user_pub);
     // let map_enum = ta_keygen::DH_KEYS.lock().unwrap();
@@ -222,6 +221,8 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     //         trace_println!("key: {:?}", key);
     //         trace_println!("val: {:?}", val);
     //     }
+
+    nistp256::verify(sign, user_pub)?;
     let io_key;
     match remove_io_key(user_pub) {
         Ok(v) => io_key = v,
@@ -292,7 +293,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
         Ok(mut object) => {
             let obj_info = object.info()?;
-            trace_println!("we've enter our funciton");
+
             let mut storage_buffer = vec![0u8; obj_info.data_size() as usize];
 
             let read_bytes = object.read(&mut storage_buffer).unwrap();
@@ -369,16 +370,16 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
     let mut tmp = Cipher::decrypt(&mut read_bytes, &storage_key.access_field() ).unwrap();
 
 
-    trace_println!("done decrypting");
+
     let mut data_bytes: BTreeMap<String, Vec<Geolocation>> = serde_json::from_slice(&tmp).unwrap();
 
-    trace_println!("tree map");
+
     let mut results = Vec::new();
     for (key, val) in data_bytes.iter() {
         if key != &string_id {
-            trace_println!("entered iter");
+
             for d in data_bytes[string_id].clone() {
-                trace_println!("print clone");
+
                 for e in val.iter() {
                     if e.testResult {
                         // It's easier to find overlaps in time because it's a direct comparison of integers
@@ -398,11 +399,9 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
                                 // then we can run a more computationally expensive and precise comparison
                                 // if ((e.lat).sin()*(d.lat).sin()+e.lat.cos()*d.lat.cos()*(e.lng-d.lng).cos()).acos() * EARTH_RADIUS < DISTANCE {
                                 //     results.push(d.clone());
-                                trace_println!("is it you?");
                                 if libm::acos(libm::sin(e.lat)*libm::sin(d.lat)+libm::cos(e.lat)*libm::cos(d.lat)*libm::cos(e.lng-d.lng)) * EARTH_RADIUS < DISTANCE {
                                     // trace_println!("results pushed?");
                                     results.push(d.clone());
-                                    trace_println!("results pushed? {:?}", &results);
                                 }
                             }
                         }
@@ -414,10 +413,8 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
 
     let mut serialized_results = serde_json::to_string(&results).expect("serialized_results");
     let mut array_u8_results = serialized_results.as_bytes();
-    trace_println!("array results {:?}", &array_u8_results);
     let encrypted_output = Cipher::encrypt(&mut array_u8_results.to_vec(), &io_key).unwrap();
 
-    trace_println!("finished encrypting len {}", encrypted_output.len());
     p2.buffer().copy_from_slice(&encrypted_output);
 
     Ok(())
@@ -425,7 +422,6 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
 }
 pub fn remove_io_key(user_pub: &mut [u8]) -> Result<DHKey> {
     // let user_clone = user_pub.clone();
-    trace_println!("entered function");
     let user_array = user_pub.to_hex();
     let mut io_key = ta_keygen::DH_KEYS.lock().expect("User dh key")
         .remove(user_array.as_str()).unwrap();
@@ -436,7 +432,6 @@ pub fn remove_io_key(user_pub: &mut [u8]) -> Result<DHKey> {
 }
 pub fn get_io_key(user_pub: &mut [u8]) -> Result<Vec<u8>> {
     // let user_clone = user_pub.clone();
-    trace_println!("entered function");
     let user_array = user_pub.to_hex();
     let mut io_key = ta_keygen::DH_KEYS.lock().expect("User dh key");
     let io_clone = io_key.get(user_array.as_str()).unwrap();

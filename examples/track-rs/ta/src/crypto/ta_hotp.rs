@@ -24,14 +24,12 @@ pub fn get_time() -> [u8; 8] {
 
     let mut time = Time::new();
     time.ree_time();
-    trace_println!("ree now {}", time);
     let now_secs = time.seconds;
     let now_secs = now_secs as u64;
 
     let mut t= ((now_secs - start_time)/time_step).to_be_bytes();
 
 
-    trace_println!("{:?}", t);
     t
 
 }
@@ -71,7 +69,6 @@ pub fn get_hotp(params: &mut Parameters) -> Result<()> {
 
     hotp.counter = get_time();
     hmac_sha1(&mut hotp, &mut mac)?;
-    trace_println!("[+] Hmac value = {:?}",&mac);
 
     let hotp_val = truncate(&mut mac);
 

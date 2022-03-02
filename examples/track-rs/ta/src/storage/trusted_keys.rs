@@ -106,7 +106,6 @@ pub fn new_keypair() -> Result<Vec<u8>> {
     let mut key = NewOperations::default();
     key.ecdh_keypair = TransientObject::allocate(TransientObjectType::EcdhKeypair, KEY_SIZE).unwrap();
     let attr_ecc = AttributeValue::from_value(AttributeId::EccCurve, ElementId::EccCurveNistP256 as u32, 0);
-    trace_println!("Generate out keypair");
     let mut private_buffer = [0u8;32];
     key.ecdh_keypair
         .generate_key(KEY_SIZE, &[attr_ecc.into()])?;
