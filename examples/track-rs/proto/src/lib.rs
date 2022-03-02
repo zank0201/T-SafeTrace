@@ -1,28 +1,22 @@
 #![feature(restricted_std)]
 pub enum Command {
     // TOTP
-    RegisterSharedKey,
+
     GetHOTP,
-    GenerateKey,
-    DeriveKey,
-    Sign,
-    Verify,
+
+
+
     GenKey,
-    Update,
-    DoFinal,
-    Start,
+
+
     Prepare,
-    AuthUpdate,
-    EncFinal,
-    DecFinal,
-    RandomGenerator,
+
+
+
     //storage
-    Read,
-    Write,
-    Delete,
+
     FindMatch,
     Report,
-
 
     Unknown,
 }
@@ -32,30 +26,21 @@ impl From<u32> for Command {
     fn from(value: u32) -> Command {
         match value {
             // TOTP
-            0 => Command::RegisterSharedKey,
-            1 => Command::GetHOTP,
-            2 => Command::GenerateKey,
+
+            0 => Command::GetHOTP,
+
             // ECDH
-            3 => Command::DeriveKey,
-            4 => Command::Sign,
-            5 => Command::Verify,
-            6 => Command::GenKey,
+
+            1 => Command::GenKey,
             // Digest
-            7 => Command::Update,
-            8 => Command::DoFinal,
-            9 => Command::Start,
+
             // authentication encryption
-            10 => Command::Prepare,
-            11 => Command::AuthUpdate,
-            12 => Command::EncFinal,
-            13 => Command::DecFinal,
-            14 => Command::RandomGenerator,
+            2 => Command::Prepare,
+
             // storage
-            15 => Command::Read,
-            16 => Command::Write,
-            17 => Command::Delete,
-            18 => Command::FindMatch,
-            19 => Command::Report,
+
+            3 => Command::FindMatch,
+            4 => Command::Report,
             _ => Command::Unknown,
         }
     }

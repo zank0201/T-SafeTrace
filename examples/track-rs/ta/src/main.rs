@@ -31,10 +31,6 @@ pub const SHA1_HASH_SIZE: usize = 20;
 pub const MAX_KEY_SIZE: usize = 64;
 pub const MIN_KEY_SIZE: usize = 10;
 pub const DBC2_MODULO: u32 = 100000000;
-// struct containing public key and secret key
-
-// lazy_static! { pub static ref STORAGE_KEY: Vec<u8> = storage::trusted_keys::get_key_object().unwrap(); }
-
 
 #[ta_create]
 fn create() -> Result<()> {
@@ -62,31 +58,18 @@ fn destroy() {
 #[ta_invoke_command]
 fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Parameters) -> Result<()> {
     trace_println!("[+] TA invoke command");
-    // sess_ctx.get_key_object()?;
-    // let mut storage_key = storage::trusted_keys::get_key_object().unwrap();
-    match Command::from(cmd_id) {
-        // Command::RegisterSharedKey => {
-        //     return register_shared_key(sess_ctx, _params);
-        // }
+        match Command::from(cmd_id) {
+
         Command::GetHOTP => {
             return get_hotp(_params);
         }
-        // Command::DeriveKey => {
-        //     return generate_key(sess_ctx, _params);
-        // }
-        // call prepare function using input data from host
+
         Command::GenKey => {
             trace_println!("Ecdsa keypair generate");
             return ecdsa_keypair(_params);
         }
 
-        // Command::Sign => {
-        //
-        //     return generate_sign(sess_ctx, _params);
-        // }
-        // Command::Update => {
-        //     return update(sess_ctx, _params);
-        // }
+
         Command::Prepare => {
 
             return add_data_object(_sess_ctx, _params);
@@ -94,40 +77,11 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
         Command::Report => {
             return create_raw_object(_sess_ctx, _params);
         }
-        // Command::AuthUpdate => {
-        //     trace_println!("invoke update");
-        //     return auth_update(sess_ctx, _params);
-        // }
-        // Command::EncFinal => {
-        //     trace_println!("invoke encrypt");
-        //     return auth_encrypt(sess_ctx, _params);
-        // }
-        // Command::DecFinal => {
-        //     trace_println!("invoke decrypt");
-        //     return auth_decrypt(sess_ctx, _params);
-        // }
-        // Command::DoFinal => {
-        //     return do_final(sess_ctx, _params);
-        // }
-        // Command::Start => {
-        //     trace_println!("invoke start");
-        //     return tcp_client();
-        // }
 
-        // Command::RandomGenerator => {
-        //     return random_number_generate(_params);
-        // }
-// storage functions
-//         Command::Write => {
-//             return create_raw_object(sess_ctx,_params);
-//         }
         Command::FindMatch => {
             return find_match_optee(_sess_ctx, _params);
         }
-//         Command::Delete => {
-//             return delete_object(_params);
-//         }
-//
+
         _ => {
             return Err(Error::new(ErrorKind::BadParameters));
         }
@@ -142,7 +96,7 @@ const TA_FLAGS: u32 = 0;
 const TA_DATA_SIZE: u32 = 96 * 1024;
 const TA_STACK_SIZE: u32 = 6 * 1024;
 const TA_VERSION: &[u8] = b"0.1\0";
-const TA_DESCRIPTION: &[u8] = b"This is an HOTP example.\0";
+const TA_DESCRIPTION: &[u8] = b"Track and trace.\0";
 const EXT_PROP_VALUE_1: &[u8] = b"Thesis TA\0";
 const EXT_PROP_VALUE_2: u32 = 0x0010;
 const TRACE_LEVEL: i32 = 4;

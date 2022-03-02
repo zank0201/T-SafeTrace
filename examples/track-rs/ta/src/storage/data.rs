@@ -20,7 +20,7 @@ use rmp_serde::{Deserializer, Serializer};
 // use serde::de::Error;
 use serde_json::from_slice;
 use rustc_hex::{FromHex, ToHex};
-use crate::storage::{objects::*, trusted_keys::KeyStorage};
+use crate::storage::{trusted_keys::KeyStorage};
 const TEST_OBJECT_SIZE: usize = 7000;
 const STORAGE_ID: &str = "Storage";
 const TA_KEY: &str = "DataKey";
