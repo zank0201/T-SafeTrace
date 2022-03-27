@@ -11,7 +11,7 @@
         "lng": 18.4690959,
         "startTS": 1564651320,
         "endTS": 1564651631,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9806584,
@@ -46,7 +46,7 @@
         "lng": 18.469265,
         "startTS": 1564664873,
         "endTS": 1564668113,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.962157,
@@ -81,28 +81,28 @@
         "lng": 18.4528363,
         "startTS": 1564751522,
         "endTS": 1564754702,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9890372,
         "lng": 18.4851007,
         "startTS": 1564756909,
         "endTS": 1564762592,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9651939,
         "lng": 18.469265,
         "startTS": 1564763519,
         "endTS": 1564850322,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9806584,
         "lng": 18.4673276,
         "startTS": 1564850956,
         "endTS": 1564851566,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9651939,
@@ -123,28 +123,28 @@
         "lng": 18.4703789,
         "startTS": 1564915023,
         "endTS": 1564915769,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9651939,
         "lng": 18.469265,
         "startTS": 1564916070,
         "endTS": 1564997307,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9622958,
         "lng": 18.470318,
         "startTS": 1564997354,
         "endTS": 1564998505,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9651939,
         "lng": 18.469265,
         "startTS": 1564998671,
         "endTS": 1564999718,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9890372,
@@ -165,7 +165,7 @@
         "lng": 18.469265,
         "startTS": 1565012145,
         "endTS": 1565085050,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.962157,
@@ -179,7 +179,7 @@
         "lng": 18.4851007,
         "startTS": 1565087993,
         "endTS": 1565095713,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9806584,
@@ -221,7 +221,7 @@
         "lng": 18.470507,
         "startTS": 1565280835,
         "endTS": 1565281633,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9651939,
@@ -242,7 +242,7 @@
         "lng": 18.4637956,
         "startTS": 1565444221,
         "endTS": 1565446693,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9651939,
@@ -263,7 +263,7 @@
         "lng": 18.469265,
         "startTS": 1565527956,
         "endTS": 1565684283,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9593954,
@@ -277,7 +277,7 @@
         "lng": 18.469265,
         "startTS": 1565685289,
         "endTS": 1565686977,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9208901,
@@ -291,7 +291,7 @@
         "lng": 18.469265,
         "startTS": 1565694280,
         "endTS": 1565713656,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9806584,
@@ -305,7 +305,7 @@
         "lng": 18.469265,
         "startTS": 1565716195,
         "endTS": 1565871747,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9878269,
@@ -319,7 +319,7 @@
         "lng": 18.4851007,
         "startTS": 1565876515,
         "endTS": 1565878524,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.987615,
@@ -452,7 +452,7 @@
         "lng": 18.469265,
         "startTS": 1566397481,
         "endTS": 1566472560,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9890372,
@@ -480,7 +480,7 @@
         "lng": 18.469265,
         "startTS": 1566554873,
         "endTS": 1566573898,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9529686,
@@ -550,14 +550,14 @@
         "lng": 18.469265,
         "startTS": 1566844799,
         "endTS": 1566911187,
-        "testResult": true
+        "testResult": false
     },
     {
         "lat": -33.9605404,
         "lng": 18.4703739,
         "startTS": 1566911420,
         "endTS": 1566913635,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9651939,
@@ -641,7 +641,7 @@
         "lng": 18.469265,
         "startTS": 1567273819,
         "endTS": 1567281581,
-        "testResult": false
+        "testResult": true
     },
     {
         "lat": -33.9651939,

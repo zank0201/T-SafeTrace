@@ -35,6 +35,7 @@ impl Default for KeyStorage {
     }
 impl KeyStorage {
     pub fn get_key_object(&mut self) -> Result<()>{
+        // storage_encryption_key()?;
         trace_println!("entered function get object");
         let mut obj_id = CString::new(TA_KEY).unwrap().into_bytes_with_nul();
 
