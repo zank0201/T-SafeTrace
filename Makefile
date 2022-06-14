@@ -22,7 +22,7 @@ OPTEE_CLIENT_PATH ?= $(OPTEE_PATH)/optee_client
 
 CCACHE ?= $(shell which ccache)
 
-EXAMPLES = $(wildcard examples/track-rs)
+EXAMPLES = $(wildcard examples/performance)
 EXAMPLES_INSTALL = $(EXAMPLES:%=%-install)
 EXAMPLES_CLEAN  = $(EXAMPLES:%=%-clean)
 

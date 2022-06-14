@@ -4,6 +4,9 @@ use optee_utee::{trace_println};
 use optee_utee::{DataFlag, ObjectStorageConstants,PersistentObject, TransientObject, Whence};
 use optee_utee::{Error, ErrorKind, Parameters,
                  Result};
+
+use optee_utee::Time;
+
 use crate::context::*;
 use crate::crypto::authenticated::*;
 use crate::storage::trusted_keys::*;
@@ -22,7 +25,7 @@ use serde_json::from_slice;
 use rustc_hex::{FromHex, ToHex};
 use crate::storage::{trusted_keys::KeyStorage};
 const TEST_OBJECT_SIZE: usize = 7000;
-const STORAGE_ID: &str = "Storage";
+const STORAGE_ID: &str = "Performance";
 const TA_KEY: &str = "DataKey";
 pub const TOVERLAP: i32 = 300;             // 5min * 60s minimum overlap
 pub const DISTANCE: f64 = 10.0;            // in meters
@@ -204,8 +207,11 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     // delete_object()?;
     // storage_encryption_key()?;
 
+//start time time stamp
 
-    trace_println!("add_data_object entered");
+    let mut start_time = Time::new();
+    start_time.system_time();
+    trace_println!("start time {}", start_time);
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
     let mut p2 = unsafe { params.2.as_memref().unwrap() };
@@ -269,22 +275,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
         Err(e) =>
             {
                 trace_println!("entered add data {:?}", e);
-            //     if e.kind() == ErrorKind::ItemNotFound {
-            //         trace_println!("have we found it?");
-            //         // let data = hashmap_new();
-            //         // let mut data = create_raw_object().unwrap();
-            //         trace_println!("done creating");
-            //         data.insert(string_id.to_string(), input_data);
-            //         let mut encoded_slice = encode_data(data).unwrap();
-            //         //call keypair
-            //
-            //         let encrypt_tree = match_encrypt(&mut encoded_slice,&mut storage_key.access_field()).unwrap();
-            //         trace_println!("encoded_slice len {:?}", &encrypt_tree);
-            //         // trace_println!("[+] print as serialized {:?}", serde_json::from_slice(encoded_slice.as_slice()).unwrap());
-            //         write_to_storage(&encrypt_tree)?;
-            //         trace_println!("done creating and reading");
-            //         Ok(())
-            //     }else{
+
 
                 return Err(e)},
         // [235, 209, 56, 136, 81, 104, 123, 104, 179, 19, 153, 135, 94, 222, 17, 239, 5, 30, 115, 222, 195, 200, 213, 132, 7, 193, 60, 71, 232, 105, 40, 216, 42, 66, 27, 212, 80, 5, 11, 58, 145, 234, 44]
@@ -299,22 +290,12 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
             let read_bytes = object.read(&mut storage_buffer).unwrap();
 
 
+            trace_println!("read bytes {}", read_bytes);
             if read_bytes != obj_info.data_size() as u32 {
                 return Err(Error::new(ErrorKind::ExcessData));
             }
 
-            // trace_println!("length of buffer {}", read_bytes);
 
-            // p3.set_updated_size(read_bytes as usize);
-            // p3.buffer().copy_from_slice(&data_buffer);
-            // trace_println!("Btree init {:?}", &p3.buffer());
-            // let new_bytes = p3.buffer();
-            // trace_println!("Btree init {:?}", &data_buffer);
-            // let mut data = Cipher::data_split(storage_buffer).unwrap();
-            // // trace_println!("cipher len {:?}", data_buffer.len());
-            // let mut ae = context::NewOperations::default();
-            // let mut key = get_key_object().unwrap();
-            // trace_println!("[+] found tag {:?}", &data.tag);
 
             let mut tmp = Cipher::decrypt(&mut storage_buffer, &storage_key.access_field() ).unwrap();
 
@@ -330,11 +311,16 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
             object.seek(0i32, Whence::DataSeekSet)?;
+            trace_println!("encrypt buffer {}", &encrypt_tree.len());
             object.write(&encrypt_tree)?;
             // write_to_storage(&encoded_slice)?;
 
+            let mut end_time = Time::new();
+            end_time.system_time();
+            trace_println!("end time {}", end_time);
 
-
+            let delta_time = get_response_time(start_time, end_time).unwrap();
+            trace_println!("delta time {}", delta_time);
 
 
             //
@@ -445,5 +431,14 @@ fn encode_data(data: BTreeMap<String, Vec<Geolocation>>) -> Result<Vec<u8>> {
 
     Ok(encoded_vec)
 }
+///function converting time to milliseconds
+fn time_in_ms(t: Time) -> Result<u32> {
+    Ok(t.seconds * 1000 + t.millis)
+}
 
+/// function to get delta time in ms
+fn get_response_time(startTime: Time, stopTime: Time) -> Result<u32> {
 
+    let response_value = time_in_ms(stopTime).unwrap() - time_in_ms(startTime).unwrap();
+    Ok(response_value)
+}
