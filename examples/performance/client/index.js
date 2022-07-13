@@ -8,8 +8,8 @@ const JSON_RPC_Server = 'http://127.0.0.1:8080';
 const QRCode = require('qrcode');
 const forge = require('node-forge');
 const buffer = require('buffer');
+const fs = require("fs");
 const EC = require('elliptic').ec;
-
 const callServer = function(request, callback) {
     let config = {
         headers: {
@@ -211,11 +211,15 @@ async function getEncryptionKey(client_pub) {
  * @param data
  * @returns {Promise<void>}
  */
-async function addData(userId, data) {
+async function addData(gps_location) {
+    let data_array = gps_location.location_data;
+    for (items of data_array) {
     let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
     try {
+        console.log("hey try");
         let {taskPubKey, sig} = await getEncryptionKey(client_pub);
+        console.log("await pubkey");
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
 
         let totp = await getTotpKey(client_pub, derivedKey);
@@ -223,46 +227,53 @@ async function addData(userId, data) {
 
 
 
-        let encryptedUserId = encrypt(derivedKey, userId);
-        let encryptedData = encrypt(derivedKey, data);
+        // for (items of data_array) {
+            // let chunks = [];
+            console.log(items.userId);
+            let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
 
+            // chunks.push(items.data);
+            console.log(JSON.stringify(items.data));
+            let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
+            console.log(encryptedData);
 
+            const addPersonalDataResult = await new Promise((resolve, reject) => {
 
-
-
-        const addPersonalDataResult = await new Promise((resolve, reject) => {
-
-            if(totp==true){
-            // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
-            // if (api_totp==false) throw "invalid totp";
-            client.request('addPersonalData', {
-            encryptedUserId: encryptedUserId,
-            encryptedData: encryptedData,
-            userPubKey: client_pub,
-              taskSign: sig},
-              (err, response) => {
-                if (err) {
-                  reject(err);
-                  return;
+                if (totp == true) {
+                    // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
+                    // if (api_totp==false) throw "invalid totp";
+                    client.request('addPersonalData', {
+                            encryptedUserId: encryptedUserId,
+                            encryptedData: encryptedData,
+                            userPubKey: client_pub,
+                            taskSign: sig
+                        },
+                        (err, response) => {
+                            if (err) {
+                                reject(err);
+                                return;
+                            }
+                            resolve(response);
+                        })
                 }
-                resolve(response);
-              })}
 
-          });
+            });
 
             // getTotpKey(client_pub).then(totp => GenerateOtp(derivedKey, totp));
 
-          const {addPersonalData} = addPersonalDataResult;
+            const {addPersonalData} = addPersonalDataResult;
 
-          if(addPersonalData.status == 0) {
-            console.log('Personal data added successfully to the enclave.');
-          } else {
-            console.log('Something went wrong. Time to debug...')
-          }
+            if (addPersonalData.status == 0) {
+                console.log('Personal data added successfully to the enclave.');
+            } else {
+                console.log('Something went wrong. Time to debug...')
+            }
+        // }
         } catch(err) {
         console.log(err);
         // Or throw an error
-        }
+    }
+    }
         }
 
 async function findMatch(userId){
@@ -345,9 +356,14 @@ let data2 = [
         "testResult": true,
     },
 ]
+// let arguments = process.argv
 
-addData("user1", JSON.stringify(data1)).then(console.log);
-addData("user2", JSON.stringify(data2)).then(console.log);
+let read = fs.readFileSync('data.json');
+let gps_location = JSON.parse(read);
+// addData(String(arguments[2]), JSON.stringify(arguments[3])).then();
+console.log(JSON.stringify(data2));
+addData(gps_location);
 // findMatch("user1").then(console.log);
 //
 //
+// loop_data()

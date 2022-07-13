@@ -27,6 +27,7 @@ serde_repr = "0.1"
 rmp-serde = "0.14.0"
 lazy_static = {version = "1.4.0"}
 libm = "0.2.2"
+csv = "1.1.6"
 [build_dependencies]
 uuid = { version = "0.8" }
 proto = { path = "../proto" }

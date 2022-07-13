@@ -18,6 +18,8 @@ use serde::{Deserialize, Serialize};
 
 
 
+use std::fs::File;
+use std::io::{Write, BufReader, BufRead};
 
 use rmp_serde::{Deserializer, Serializer};
 // use serde::de::Error;
@@ -45,7 +47,7 @@ pub fn create_raw_object(signing_key: &mut KeyStorage, params: &mut Parameters) 
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     // let mut p1 = unsafe { params.1.as_memref().unwrap() };
     //
-    // delete_object()?;
+    delete_object()?;
 
 
     signing_key.get_key_object()?;
@@ -240,22 +242,30 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
 
+
     let mut obj_id = CString::new(STORAGE_ID).unwrap().into_bytes_with_nul();
+    trace_println!("is it after storage id");
     // let mut decrypted_obj_id = find_match_optee(&mut obj_id, key).unwrap();
+
     let mut data_buffer = vec![0;p3.buffer().len() as usize];
     data_buffer.copy_from_slice(p3.buffer());
 
     let mut output_buffer = vec![0;p0.buffer().len() as usize];
     output_buffer.copy_from_slice(p0.buffer());
 
+    trace_println!("we buffered");
     let decrypted_user_id = Cipher::decrypt(&mut user_id, &io_key).unwrap();
+    trace_println!("decrypted_user_id");
     let decrypted_data = Cipher::decrypt(&mut data_buffer, &io_key).unwrap();
     // let (decrypted_user_id, decrypted_data) = decrypt_new_user(&mut user_id, &mut data_buffer, &key).unwrap();
-
+    trace_println!("decrypted_user_data");
     let string_id = str::from_utf8(&decrypted_user_id).unwrap();
+
     //
     // let string_data = String::from_utf8(decrypted_data);
+    trace_println!("decrypted_data: {:?}", &decrypted_data);
     let mut input_data = serde_json::from_slice(&decrypted_data).unwrap();
+    trace_println!("serde json from slice");
     // let mut init_data: [u8; 0] = [0; 0];
     // let mut new_output = read_raw_object().unwrap();
     // trace_println!("we left output buffer {:?}", new_output.len());
@@ -408,6 +418,7 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
 }
 pub fn remove_io_key(user_pub: &mut [u8]) -> Result<DHKey> {
     // let user_clone = user_pub.clone();
+    trace_println!("entered io key");
     let user_array = user_pub.to_hex();
     let mut io_key = ta_keygen::DH_KEYS.lock().expect("User dh key")
         .remove(user_array.as_str()).unwrap();
