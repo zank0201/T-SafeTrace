@@ -239,23 +239,23 @@ async function addData(gps_location) {
 
             const addPersonalDataResult = await new Promise((resolve, reject) => {
 
-                if (totp == true) {
+                // if (totp == true)
                     // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
                     // if (api_totp==false) throw "invalid totp";
-                    client.request('addPersonalData', {
-                            encryptedUserId: encryptedUserId,
-                            encryptedData: encryptedData,
-                            userPubKey: client_pub,
-                            taskSign: sig
-                        },
-                        (err, response) => {
-                            if (err) {
-                                reject(err);
-                                return;
-                            }
-                            resolve(response);
-                        })
-                }
+                client.request('addPersonalData', {
+                        encryptedUserId: encryptedUserId,
+                        encryptedData: encryptedData,
+                        userPubKey: client_pub,
+                        taskSign: sig
+                    },
+                    (err, response) => {
+                        if (err) {
+                            reject(err);
+                            return;
+                        }
+                        resolve(response);
+                    })
+
 
             });
 
