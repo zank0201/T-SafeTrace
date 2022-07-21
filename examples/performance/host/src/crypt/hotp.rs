@@ -23,7 +23,7 @@ pub fn get_hotp(session: &mut Session, key: &str) -> optee_teec::Result<String> 
         let (p0, _, _, _) = operation.parameters();
         let hotp_value = p0.a();
 
-        println!("Get HOTP: {}", hotp_value);
+        // println!("Get HOTP: {}", hotp_value);
 
         // if hotp_value != RFC4226_TEST_VALUES[i] {
         //     println!(

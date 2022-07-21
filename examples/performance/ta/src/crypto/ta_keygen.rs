@@ -81,7 +81,7 @@ pub fn generate_key(user_pub: &[u8], private_value: &[u8]) -> Result<()> {
 
 
 
-            trace_println!("done deriving");
+            // trace_println!("done deriving");
             Ok(())
         }
     }

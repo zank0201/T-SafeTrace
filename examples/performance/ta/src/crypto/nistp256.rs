@@ -1,7 +1,7 @@
 use optee_utee::{
 trace_println,
 };
-
+use optee_utee::Time;
 use optee_utee::{AlgorithmId, Asymmetric,OperationMode, ObjectHandle, AttributeId, AttributeMemref, AttributeValue, Random, AE};
 use optee_utee::{Error, ErrorKind, Parameters, Result};
 use optee_utee::{TransientObject, TransientObjectType, ElementId};
@@ -19,7 +19,7 @@ pub use crate::crypto::context::*;
 //TODO save derived key and public key to storage
 
 pub fn ecdsa_keypair(params: &mut Parameters) -> Result<()> {
-    trace_println!("Entered ecdsa");
+    // trace_println!("Entered ecdsa");
 
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     //p1 = userid
@@ -36,6 +36,7 @@ pub fn ecdsa_keypair(params: &mut Parameters) -> Result<()> {
     // let (mut ecc_x_buffer, mut ecc_y_buffer) = public_buffer.split_at(public_buffer.len()/2);
     let mut ecc_x_buffer = p0.buffer();
     let mut ecc_y_buffer = p1.buffer();
+    // let (mut user_pub, mut sign) = buffer.split_at_mut(buffer.len()/2);
     // ecc_x_buffer.clone_from_slice(&public_buffer[..32]);
     // ecc_y_buffer.clone_from_slice(&public_buffer[32..]);
 
@@ -99,6 +100,7 @@ pub fn ecdsa_keypair(params: &mut Parameters) -> Result<()> {
     // trace_println!("change values for struct {:?}", &ecdsa.private_key);
     //
 
+    // trace_println!("delta_time {}", delta_time);
     Ok(())
 
 
@@ -110,7 +112,7 @@ const PREFIX: &'static [u8; 19] = b"Enigma User Message";
 
 pub fn generate_sign(ecdsa: &mut NewOperations, sig: &mut [u8]) -> Result<Vec<u8>> {
     // allocate signing operation
-    trace_println!("entered signature");
+    // trace_println!("entered signature");
     // let mut p0 = unsafe { params.0.as_value().unwrap() };
     // let mut p1 = unsafe { params.1.as_memref().unwrap() };
     // let mut p2 = unsafe { params.2.as_memref().unwrap() };
@@ -208,7 +210,7 @@ pub fn verify(sig: &mut [u8], user_pubkey: &mut [u8]) -> Result<()> {
                 operation.set_key(&ecdsa_keypair);
                 operation
                 .verify_digest(&[], &res, & mut *sig);
-                    trace_println!("Verified");
+                    // trace_println!("Verified");
                 Ok(())
             }
         }

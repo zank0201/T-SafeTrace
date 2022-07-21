@@ -21,6 +21,7 @@ use networking::{Ipc_Listener, IpcListener};
 //
 use proto::{Command, Mode, AAD_LEN, BUFFER_SIZE, K_LEN, TAG_LEN, UUID};
 //
+use std::{time::Duration};
 
 fn main() -> optee_teec::Result<()> {
 
@@ -33,7 +34,6 @@ fn main() -> optee_teec::Result<()> {
     // TOTP main arguments
 
 
-
     // DH key generation
     let server = IpcListener::new(&format!("tcp://*:5552"));
     server
@@ -43,6 +43,9 @@ fn main() -> optee_teec::Result<()> {
         .unwrap();
 
 
+
+
     println!("Success");
+
     Ok(())
 }

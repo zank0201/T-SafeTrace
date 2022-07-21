@@ -34,30 +34,31 @@ pub const DBC2_MODULO: u32 = 100000000;
 
 #[ta_create]
 fn create() -> Result<()> {
-    trace_println!("[+] TA create");
+    // trace_println!("[+] TA create");
     Ok(())
 }
 
 #[ta_open_session]
 fn open_session(_params: &mut Parameters, _sess_ctx: &mut KeyStorage) -> Result<()> {
-    trace_println!("[+] TA open session");
+    // trace_println!("[+] TA open session");
 
     Ok(())
 }
 
 #[ta_close_session]
 fn close_session(_sess_ctx: &mut KeyStorage) {
-    trace_println!("[+] TA close session");
+
+    // trace_println!("[+] TA close session");
 }
 
 #[ta_destroy]
 fn destroy() {
-    trace_println!("[+] TA destroy");
+    // trace_println!("[+] TA destroy");
 }
 
 #[ta_invoke_command]
 fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Parameters) -> Result<()> {
-    trace_println!("[+] TA invoke command");
+    // trace_println!("[+] TA invoke command");
         match Command::from(cmd_id) {
 
         Command::GetHOTP => {
@@ -65,7 +66,7 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
         }
 
         Command::GenKey => {
-            trace_println!("Ecdsa keypair generate");
+            // trace_println!("Ecdsa keypair generate");
             return ecdsa_keypair(_params);
         }
 
@@ -93,7 +94,7 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
 
 // TA configurations
 const TA_FLAGS: u32 = 0;
-const TA_DATA_SIZE: u32 = 96 * 4 * 1024;
+const TA_DATA_SIZE: u32 = 96 * 14 * 1024;
 const TA_STACK_SIZE: u32 = 3* 6 * 1024;
 const TA_VERSION: &[u8] = b"0.1\0";
 const TA_DESCRIPTION: &[u8] = b"Track and trace.\0";

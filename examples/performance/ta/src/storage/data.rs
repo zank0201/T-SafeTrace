@@ -19,11 +19,14 @@ use serde::{Deserialize, Serialize};
 
 
 use std::fs::File;
-use std::io::{Write, BufReader, BufRead};
+use std::fs::OpenOptions;
+use std::io::{Write};
 
+use std::process;
 use rmp_serde::{Deserializer, Serializer};
 // use serde::de::Error;
 use serde_json::from_slice;
+
 use rustc_hex::{FromHex, ToHex};
 use crate::storage::{trusted_keys::KeyStorage};
 const TEST_OBJECT_SIZE: usize = 7000;
@@ -70,7 +73,7 @@ pub fn create_raw_object(signing_key: &mut KeyStorage, params: &mut Parameters) 
     let mut encrypt_tree = Cipher::encrypt(&mut encoded_slice,&mut signing_key.access_field()).unwrap();
 
     // need key from
-    trace_println!("[+] create_raw_object");
+    // trace_println!("[+] create_raw_object");
     let obj_data_flag = DataFlag::SHARE_READ
         | DataFlag::ACCESS_WRITE
         | DataFlag::SHARE_WRITE;
@@ -102,7 +105,7 @@ pub fn create_raw_object(signing_key: &mut KeyStorage, params: &mut Parameters) 
 }
 
 pub fn write_to_storage(data:&[u8]) -> Result<()> {
-   trace_println!("[+] entered write storage");
+   // trace_println!("[+] entered write storage");
     // let obj_data = hashmap_population(ptr,string_id, input_data);
     // (string_id, input_data);
 
@@ -115,7 +118,7 @@ pub fn write_to_storage(data:&[u8]) -> Result<()> {
             | DataFlag::ACCESS_WRITE_META| DataFlag::SHARE_READ |
             DataFlag::SHARE_WRITE) {
         Ok(mut object) => {
-            trace_println!("[+] write storage to stroage");
+            // trace_println!("[+] write storage to stroage");
             object.write(&data)?;
 
 
@@ -190,7 +193,7 @@ pub fn read_raw_object() -> Result<Vec<u8>> {
 
 
 
-            trace_println!("done reading");
+            // trace_println!("done reading");
 
             return Ok(data_buffer)
         }
@@ -213,15 +216,21 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
     let mut start_time = Time::new();
     start_time.system_time();
-    trace_println!("start time {}", start_time);
-    let mut p0 = unsafe { params.0.as_memref().unwrap() };
+    // trace_println!("start time {}", start_time);
+    let mut p0 = unsafe { params.0.as_value().unwrap() };
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
     let mut p2 = unsafe { params.2.as_memref().unwrap() };
     let mut p3 = unsafe { params.3.as_memref().unwrap() };
     let mut user_id = vec![0; p1.buffer().len() as usize];
+
+    let mut buffer = p2.buffer();
     user_id.copy_from_slice(p1.buffer());
-    let user_pub = p2.buffer();
-    let sign = p0.buffer();
+
+    let (mut user_pub, mut sign) = buffer.split_at_mut(buffer.len()/2);
+
+    // user_pub.clone_from_slice(&buffer[..64]);
+    // sign.clone_from_slice(&buffer[64..]);
+
 
     // let pub_array = vector_array(&user_pub);
     // let map_enum = ta_keygen::DH_KEYS.lock().unwrap();
@@ -230,7 +239,8 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     //         trace_println!("val: {:?}", val);
     //     }
 
-    nistp256::verify(sign, user_pub)?;
+    nistp256::verify(sign,user_pub)?;
+
     let io_key;
     match remove_io_key(user_pub) {
         Ok(v) => io_key = v,
@@ -245,13 +255,12 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
     let mut obj_id = CString::new(STORAGE_ID).unwrap().into_bytes_with_nul();
 
+    // println!("from tee");
     // let mut decrypted_obj_id = find_match_optee(&mut obj_id, key).unwrap();
 
     let mut data_buffer = vec![0;p3.buffer().len() as usize];
     data_buffer.copy_from_slice(p3.buffer());
 
-    let mut output_buffer = vec![0;p0.buffer().len() as usize];
-    output_buffer.copy_from_slice(p0.buffer());
 
 
     let decrypted_user_id = Cipher::decrypt(&mut user_id, &io_key).unwrap();
@@ -300,7 +309,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
             let read_bytes = object.read(&mut storage_buffer).unwrap();
 
 
-            trace_println!("read bytes {}", read_bytes);
+            // trace_println!("read bytes {}", read_bytes);
             if read_bytes != obj_info.data_size() as u32 {
                 return Err(Error::new(ErrorKind::ExcessData));
             }
@@ -309,6 +318,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
             let mut tmp = Cipher::decrypt(&mut storage_buffer, &storage_key.access_field() ).unwrap();
 
+            // trace_println!("storage data {}", storage_buffer.len());
             let mut data_bytes: BTreeMap<String, Vec<Geolocation>> = serde_json::from_slice(&tmp).unwrap();
 
             // trace_println!("[+] serialize from storage {:?}", &keys);
@@ -321,23 +331,31 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
             object.seek(0i32, Whence::DataSeekSet)?;
-            trace_println!("encrypt buffer {}", &encrypt_tree.len());
+            // trace_println!("encrypt buffer {}", &encrypt_tree.len());
             object.write(&encrypt_tree)?;
             // write_to_storage(&encoded_slice)?;
 
+
             let mut end_time = Time::new();
             end_time.system_time();
-            trace_println!("end time {}", end_time);
+            // trace_println!("end time {}", end_time);
 
             let delta_time = get_response_time(start_time, end_time).unwrap();
-            trace_println!("delta time {}", delta_time);
+            // trace_println!("delta time {}", delta_time);
 
 
+           // let data_stamp = write_to_file(delta_time, encrypt_tree.len() as u32).unwrap();
+            // trace_println!("data stamp {:?}", data_stamp);
             //
             //
             // let data_buffer_encrypt = match_encrypt(&mut data_buffer, key).unwrap();
             // object.seek(0, Whence::DataSeekCur)?;
-            trace_println!("done reading");
+            // trace_println!("done reading");
+
+
+            // let str_r = u32::from_str_radix(&data_stamp, 32).unwrap();
+            p0.set_a(delta_time);
+            p0.set_b(encrypt_tree.len() as u32);
 
             Ok(())
         }
@@ -448,8 +466,32 @@ fn time_in_ms(t: Time) -> Result<u32> {
 }
 
 /// function to get delta time in ms
-fn get_response_time(startTime: Time, stopTime: Time) -> Result<u32> {
+pub fn get_response_time(startTime: Time, stopTime: Time) -> Result<u32> {
 
     let response_value = time_in_ms(stopTime).unwrap() - time_in_ms(startTime).unwrap();
     Ok(response_value)
 }
+
+
+// fn write_to_file(time: u32, bytes_val: u32) -> Result<Vec<(u32, u32>> {
+//
+//     let data = vec![time.to_string(), bytes_val.to_string()];
+//     let data_joined = data.join(",");
+//
+//     // let data_txt = format!("{}{}", data_joined, "\n");
+//
+
+
+
+    // trace_println!("string converted");
+    // wrt.serialize(Record {
+    //     responseTime: time.to_string(),
+    //     bytes: bytes_val.to_string(),
+    // }).unwrap();
+    // trace_println!("seriliaze error");
+
+
+    // write!(file,"{}", data_txt).unwrap();
+//
+//     Ok(data)
+// }

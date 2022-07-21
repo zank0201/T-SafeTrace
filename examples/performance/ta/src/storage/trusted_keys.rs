@@ -35,8 +35,8 @@ impl Default for KeyStorage {
     }
 impl KeyStorage {
     pub fn get_key_object(&mut self) -> Result<()>{
-        // storage_encryption_key()?;
-        trace_println!("entered function get object");
+        storage_encryption_key()?;
+        // trace_println!("entered function get object");
         let mut obj_id = CString::new(TA_KEY).unwrap().into_bytes_with_nul();
 
         let mut data_buffer = vec![0;K_LEN as usize];
@@ -71,7 +71,7 @@ impl KeyStorage {
 
 
 
-                trace_println!("done reading");
+                // trace_println!("done reading");
                 self.data = data_buffer;
                 Ok(())
             }
@@ -115,7 +115,7 @@ pub fn new_keypair() -> Result<Vec<u8>> {
         .unwrap();
     let mut private_res = vec![0u8; private_key_size as usize];
     private_res.copy_from_slice(&private_buffer[..private_key_size as usize]);
-    trace_println!("Done generating");
+    // trace_println!("Done generating");
     return Ok(private_res)
 
 }

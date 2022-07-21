@@ -41,7 +41,7 @@ pub fn ecdsa_keypair(session: &mut Session, user_pubkey: &str) -> optee_teec::Re
     let p3 = ParamTmpRef::new_output(&mut signature_buffer);
 //     call operation from TEE
 
-    println!("invoking operation");
+    // println!("invoking operation");
     let mut operation = Operation::new(0, p0, p1, p2, p3);
     session.invoke_command(Command::GenKey as u32, &mut operation)?;
 

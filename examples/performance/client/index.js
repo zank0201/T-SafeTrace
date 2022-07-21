@@ -40,7 +40,7 @@ const client = new jaysonBrowserClient(callServer, {});
 
 //TODO implement ecdh
 function deriveKeys(taskpubkey,privatekey ) {
-    console.log("entered derive keys function");
+    // console.log("entered derive keys function");
     let ec = new EC("p256");
     if (taskpubkey.length == 128) {
         taskpubkey = '04' + taskpubkey;
@@ -142,12 +142,12 @@ function GenerateOtp(secret, enclavetotp) {
         algorithm: "sha1", encoding: 'hex', window: 10}
 
     let token = totp.generate(secret);
-    console.log("generated token ", token);
+    // console.log("generated token ", token);
     let isvalid = totp.check(enclavetotp, secret);
     // let opt = {window: 200, counter: 50};
     // let token = notp.totp.gen(secret,{} );
 
-    console.log(isvalid);
+    // console.log(isvalid);
 
 
 // valid token
@@ -177,7 +177,11 @@ async function getTotpKey(client_pub, secret) {
     return totpCheck;
 
 }
+const awaitTimeout = delay =>
+    new Promise(resolve => setTimeout(resolve, delay));
+
 async function getEncryptionKey(client_pub) {
+
 
         const getEncryptionKeyResult = await new Promise((resolve, reject) => {
             client.request('newTaskEncryptionKey', {userPubKey: client_pub},
@@ -217,9 +221,9 @@ async function addData(gps_location) {
     let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
     try {
-        console.log("hey try");
+        // console.log("hey try");
         let {taskPubKey, sig} = await getEncryptionKey(client_pub);
-        console.log("await pubkey");
+
         let derivedKey = deriveKeys(taskPubKey, private_buffer);
 
         let totp = await getTotpKey(client_pub, derivedKey);
@@ -229,15 +233,19 @@ async function addData(gps_location) {
 
         // for (items of data_array) {
             // let chunks = [];
-            console.log(items.userId);
+            // console.log(items.userId);
             let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
 
             // chunks.push(items.data);
-            console.log(JSON.stringify(items.data));
+            // console.log(JSON.stringify(items.data));
             let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
-            console.log(encryptedData);
+            // console.log(encryptedData);
 
+
+        await awaitTimeout(6000);
+        console.log("printed after 3000");
             const addPersonalDataResult = await new Promise((resolve, reject) => {
+
 
                 // if (totp == true)
                     // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
@@ -361,7 +369,7 @@ let data2 = [
 let read = fs.readFileSync('data.json');
 let gps_location = JSON.parse(read);
 // addData(String(arguments[2]), JSON.stringify(arguments[3])).then();
-console.log(JSON.stringify(data2));
+
 addData(gps_location);
 // findMatch("user1").then(console.log);
 //
