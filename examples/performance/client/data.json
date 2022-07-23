@@ -1,0 +1,1120 @@
+{
+    "location_data": [
+        {
+            "userId": "User1",
+            "data": [
+                {
+                    "lat": -33.9621744,
+                    "lng": 18.4700326,
+                    "startTS": 1564644354,
+                    "endTS": 1564650093,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User2",
+            "data": [
+                {
+                    "lat": -33.9436729,
+                    "lng": 18.4690959,
+                    "startTS": 1564651320,
+                    "endTS": 1564651631,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User3",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1564652582,
+                    "endTS": 1564660141,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User4",
+            "data": [
+                {
+                    "lat": -33.9433769,
+                    "lng": 18.4682218,
+                    "startTS": 1564660719,
+                    "endTS": 1564661198,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User5",
+            "data": [
+                {
+                    "lat": -33.979713,
+                    "lng": 18.465293,
+                    "startTS": 1564662170,
+                    "endTS": 1564663170,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User6",
+            "data": [
+                {
+                    "lat": -33.9605404,
+                    "lng": 18.4703739,
+                    "startTS": 1564663697,
+                    "endTS": 1564664419,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User7",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564664873,
+                    "endTS": 1564668113,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User8",
+            "data": [
+                {
+                    "lat": -33.962157,
+                    "lng": 18.4703789,
+                    "startTS": 1564668583,
+                    "endTS": 1564669982,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User9",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564670135,
+                    "endTS": 1564743601,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User10",
+            "data": [
+                {
+                    "lat": -33.921031,
+                    "lng": 18.422996,
+                    "startTS": 1564744996,
+                    "endTS": 1564747123,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User11",
+            "data": [
+                {
+                    "lat": -33.932808,
+                    "lng": 18.4220725,
+                    "startTS": 1564747741,
+                    "endTS": 1564749536,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User12",
+            "data": [
+                {
+                    "lat": -34.0641478,
+                    "lng": 18.4528363,
+                    "startTS": 1564751522,
+                    "endTS": 1564754702,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User13",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1564756909,
+                    "endTS": 1564762592,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User14",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564763519,
+                    "endTS": 1564850322,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User15",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1564850956,
+                    "endTS": 1564851566,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User16",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564852137,
+                    "endTS": 1564912554,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User17",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1564913646,
+                    "endTS": 1564914435,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User18",
+            "data": [
+                {
+                    "lat": -33.962157,
+                    "lng": 18.4703789,
+                    "startTS": 1564915023,
+                    "endTS": 1564915769,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User19",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564916070,
+                    "endTS": 1564997307,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User20",
+            "data": [
+                {
+                    "lat": -33.9622958,
+                    "lng": 18.470318,
+                    "startTS": 1564997354,
+                    "endTS": 1564998505,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User21",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1564998671,
+                    "endTS": 1564999718,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User22",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1565000646,
+                    "endTS": 1565009181,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User23",
+            "data": [
+                {
+                    "lat": -33.9803578,
+                    "lng": 18.4637956,
+                    "startTS": 1565010676,
+                    "endTS": 1565011648,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User24",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565012145,
+                    "endTS": 1565085050,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User25",
+            "data": [
+                {
+                    "lat": -33.962157,
+                    "lng": 18.4703789,
+                    "startTS": 1565085705,
+                    "endTS": 1565086528,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User26",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1565087993,
+                    "endTS": 1565095713,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User27",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1565096694,
+                    "endTS": 1565097506,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User28",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565098164,
+                    "endTS": 1565196500,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User29",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1565196950,
+                    "endTS": 1565197749,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User30",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565198236,
+                    "endTS": 1565277540,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User31",
+            "data": [
+                {
+                    "lat": -33.9582596,
+                    "lng": 18.4600887,
+                    "startTS": 1565277816,
+                    "endTS": 1565280015,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User32",
+            "data": [
+                {
+                    "lat": -33.960498,
+                    "lng": 18.470507,
+                    "startTS": 1565280835,
+                    "endTS": 1565281633,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User33",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565281861,
+                    "endTS": 1565434561,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User34",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1565436129,
+                    "endTS": 1565443300,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User35",
+            "data": [
+                {
+                    "lat": -33.9803578,
+                    "lng": 18.4637956,
+                    "startTS": 1565444221,
+                    "endTS": 1565446693,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User36",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565447406,
+                    "endTS": 1565525146,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User37",
+            "data": [
+                {
+                    "lat": -33.9622958,
+                    "lng": 18.470318,
+                    "startTS": 1565525242,
+                    "endTS": 1565527606,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User38",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565527956,
+                    "endTS": 1565684283,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User39",
+            "data": [
+                {
+                    "lat": -33.9593954,
+                    "lng": 18.4709151,
+                    "startTS": 1565684538,
+                    "endTS": 1565685060,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User40",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565685289,
+                    "endTS": 1565686977,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User41",
+            "data": [
+                {
+                    "lat": -33.9208901,
+                    "lng": 18.3831929,
+                    "startTS": 1565688911,
+                    "endTS": 1565692900,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User42",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565694280,
+                    "endTS": 1565713656,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User43",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1565714562,
+                    "endTS": 1565715437,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User44",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565716195,
+                    "endTS": 1565871747,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User45",
+            "data": [
+                {
+                    "lat": -33.9878269,
+                    "lng": 18.487754,
+                    "startTS": 1565872822,
+                    "endTS": 1565876089,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User46",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1565876515,
+                    "endTS": 1565878524,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User47",
+            "data": [
+                {
+                    "lat": -33.987615,
+                    "lng": 18.486456,
+                    "startTS": 1565878908,
+                    "endTS": 1565879267,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User48",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565880393,
+                    "endTS": 1565932247,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User49",
+            "data": [
+                {
+                    "lat": -33.9873219,
+                    "lng": 18.4841133,
+                    "startTS": 1565933015,
+                    "endTS": 1565934417,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User50",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565935627,
+                    "endTS": 1565952272,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User51",
+            "data": [
+                {
+                    "lat": -33.9873219,
+                    "lng": 18.4841133,
+                    "startTS": 1565953005,
+                    "endTS": 1565953451,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User52",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1565954658,
+                    "endTS": 1566036407,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User53",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1566037774,
+                    "endTS": 1566045182,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User54",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566046347,
+                    "endTS": 1566137998,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User55",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566139028,
+                    "endTS": 1566143836,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User56",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1566145481,
+                    "endTS": 1566146780,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User57",
+            "data": [
+                {
+                    "lat": -33.9766403,
+                    "lng": 18.4644771,
+                    "startTS": 1566147027,
+                    "endTS": 1566147379,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User58",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566147602,
+                    "endTS": 1566212476,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User59",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1566214493,
+                    "endTS": 1566221211,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User60",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566222910,
+                    "endTS": 1566294818,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User61",
+            "data": [
+                {
+                    "lat": -33.9357333,
+                    "lng": 18.4107566,
+                    "startTS": 1566296094,
+                    "endTS": 1566299299,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User62",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566300216,
+                    "endTS": 1566387292,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User63",
+            "data": [
+                {
+                    "lat": -33.9622958,
+                    "lng": 18.470318,
+                    "startTS": 1566387545,
+                    "endTS": 1566389687,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User64",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1566390706,
+                    "endTS": 1566396462,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User65",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566397481,
+                    "endTS": 1566472560,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User66",
+            "data": [
+                {
+                    "lat": -33.9890372,
+                    "lng": 18.4851007,
+                    "startTS": 1566473592,
+                    "endTS": 1566481861,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User67",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566482972,
+                    "endTS": 1566548004,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User68",
+            "data": [
+                {
+                    "lat": -33.957652,
+                    "lng": 18.4611991,
+                    "startTS": 1566548374,
+                    "endTS": 1566554529,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User69",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566554873,
+                    "endTS": 1566573898,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User70",
+            "data": [
+                {
+                    "lat": -33.9529686,
+                    "lng": 18.377382,
+                    "startTS": 1566576668,
+                    "endTS": 1566582630,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User71",
+            "data": [
+                {
+                    "lat": -33.9529686,
+                    "lng": 18.377382,
+                    "startTS": 1566590617,
+                    "endTS": 1566592135,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User72",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566595416,
+                    "endTS": 1566649183,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User73",
+            "data": [
+                {
+                    "lat": -34.0172991,
+                    "lng": 18.3802353,
+                    "startTS": 1566650898,
+                    "endTS": 1566660009,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User74",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566661937,
+                    "endTS": 1566742272,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User75",
+            "data": [
+                {
+                    "lat": -33.9806584,
+                    "lng": 18.4673276,
+                    "startTS": 1566742999,
+                    "endTS": 1566745367,
+                    "testResult": true
+                }
+            ]
+        },
+        {
+            "userId": "User76",
+            "data": [
+                {
+                    "lat": -33.9776788,
+                    "lng": 18.4652589,
+                    "startTS": 1566745680,
+                    "endTS": 1566746009,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User77",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566746302,
+                    "endTS": 1566835770,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User78",
+            "data": [
+                {
+                    "lat": -33.9581795,
+                    "lng": 18.460083,
+                    "startTS": 1566837147,
+                    "endTS": 1566844493,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User79",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566844799,
+                    "endTS": 1566911187,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User80",
+            "data": [
+                {
+                    "lat": -33.9605404,
+                    "lng": 18.4703739,
+                    "startTS": 1566911420,
+                    "endTS": 1566913635,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User81",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566913765,
+                    "endTS": 1566974793,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User82",
+            "data": [
+                {
+                    "lat": -33.9581795,
+                    "lng": 18.460083,
+                    "startTS": 1566975262,
+                    "endTS": 1566988371,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User83",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1566988812,
+                    "endTS": 1566990613,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User84",
+            "data": [
+                {
+                    "lat": -33.9581795,
+                    "lng": 18.460083,
+                    "startTS": 1566991110,
+                    "endTS": 1567001106,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User85",
+            "data": [
+                {
+                    "lat": -33.9655793,
+                    "lng": 18.4676543,
+                    "startTS": 1567001604,
+                    "endTS": 1567014747,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User86",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1567015117,
+                    "endTS": 1567172991,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User87",
+            "data": [
+                {
+                    "lat": -33.957652,
+                    "lng": 18.4611991,
+                    "startTS": 1567173363,
+                    "endTS": 1567178349,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User88",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1567178585,
+                    "endTS": 1567189511,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User89",
+            "data": [
+                {
+                    "lat": -33.9605404,
+                    "lng": 18.4703739,
+                    "startTS": 1567189819,
+                    "endTS": 1567190483,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User90",
+            "data": [
+                {
+                    "lat": -33.976873,
+                    "lng": 18.464215,
+                    "startTS": 1567190857,
+                    "endTS": 1567191138,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User91",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1567191444,
+                    "endTS": 1567272860,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User92",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1567273819,
+                    "endTS": 1567281581,
+                    "testResult": false
+                }
+            ]
+        },
+        {
+            "userId": "User93",
+            "data": [
+                {
+                    "lat": -33.9651939,
+                    "lng": 18.469265,
+                    "startTS": 1567283694,
+                    "endTS": 1567422313,
+                    "testResult": false
+                }
+            ]
+        }
+    ]
+}
