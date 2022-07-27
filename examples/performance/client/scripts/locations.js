@@ -4,6 +4,7 @@ function parsed_data() {
 
     let read = fs.readFileSync('2019_AUGUST.json');
 
+
     let data = JSON.parse(read);
 
     let count = 1;
