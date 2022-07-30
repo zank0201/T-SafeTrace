@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/optee/build" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/optee/build/optee_benchmark" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/optee/optee_client" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/optee/optee_os" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/compiler-builtins" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/compiler-builtins/libm" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/libc" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/rust" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/rust/library/backtrace" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/rust/library/stdarch" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rust/rust/src/llvm-project" vcs="Git" />
+  </component>
+</project>

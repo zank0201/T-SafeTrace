@@ -236,9 +236,8 @@ async function getEncryptionKey(client_pub) {
  * @param data
  * @returns {Promise<void>}
  */
-async function addData(gps_location) {
-    let data_array = gps_location.location_data;
-    for (items of data_array) {
+async function addData(userId, data) {
+
     let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
     try {
@@ -255,17 +254,16 @@ async function addData(gps_location) {
         // for (items of data_array) {
             // let chunks = [];
             // console.log(items.userId);
-            let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
+            let encryptedUserId = encrypt(derivedKey, userId);
 
             // chunks.push(items.data);
             // console.log(JSON.stringify(items.data));
-            let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
+            let encryptedData = encrypt(derivedKey, data);
             // console.log(encryptedData);
 
 
-        await awaitTimeout(6000);
-        console.log("printed after 3000");
-            const addPersonalDataResult = await new Promise((resolve, reject) => {
+        // await awaitTimeout(6000);
+        const addPersonalDataResult = await new Promise((resolve, reject) => {
 
 
                 // if (totp == true)
@@ -302,7 +300,7 @@ async function addData(gps_location) {
         console.log(err);
         // Or throw an error
     }
-    }
+
         }
 
 async function findMatch(userId){
@@ -382,9 +380,7 @@ async function TestData(gps_location) {
             let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
 
             // chunks.push(items.data);
-            // console.log(JSON.stringify(items.data));
             let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
-            // console.log(encryptedData);
             let obj_data = {"Id": encryptedUserId, "data": {"encrypt_data": encryptedData, "key": client_pub }};
 
             apiData.encrypted_test.push(obj_data);
@@ -439,13 +435,13 @@ let data2 = [
 ]
 // let arguments = process.argv
 
-let read = fs.readFileSync('data.json');
-let gps_location = JSON.parse(read);
+
 // addData(String(arguments[2]), JSON.stringify(arguments[3])).then();
 
-// addData(gps_location);
-TestData(gps_location);
-// findMatch("user1").then(console.log);
+// addData("User1", JSON.stringify(data1));
+// addData("User2", JSON.stringify(data2));
+// TestData(gps_location);
+// findMatch("User1").then(console.log);
 //
 //
 // loop_data()

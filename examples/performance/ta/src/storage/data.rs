@@ -50,7 +50,7 @@ pub fn create_raw_object(signing_key: &mut KeyStorage, params: &mut Parameters) 
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     // let mut p1 = unsafe { params.1.as_memref().unwrap() };
     //
-    // delete_object()?;
+    delete_object()?;
 
 
     signing_key.get_key_object()?;
@@ -269,9 +269,11 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
     let decrypted_user_id = Cipher::decrypt(&mut user_id, &io_key).unwrap();
 
+    trace_println!("exit user id");
     let decrypted_data = Cipher::decrypt(&mut data_buffer, &io_key).unwrap();
     // let (decrypted_user_id, decrypted_data) = decrypt_new_user(&mut user_id, &mut data_buffer, &key).unwrap();
 
+    trace_println!("exit data");
     let string_id = str::from_utf8(&decrypted_user_id).unwrap();
 
     //
@@ -376,7 +378,6 @@ pub fn find_match_optee(storage_key: &mut KeyStorage, params: &mut Parameters) -
     let user_pub = p1.buffer();
     // let pub_array = vector_array(&user_pub);
     // trace_println!("io string {:?}", &user_pub);
-    trace_println!("user pub key when we enter find {:?}", &user_pub);
     let io_key;
     match remove_io_key(user_pub) {
         Ok(v) => io_key = v,
