@@ -204,6 +204,27 @@ async function getEncryptionKey(client_pub) {
 
 
 }
+// function parsed_data(encrypted_userid, encrypted_data, encrypted_pub) {
+//     let apiData = {encrypted_test: []};
+//
+//
+//
+//     let obj_data = {"Id": encrypted_userid, "data": {"encrypt_data": encrypted_data, "key": encrypted_pub }};
+//
+//         // apiData.location_data.push({"lat": lat, "lng": lng, "startTS": startTime, "endTS": endTime, "testResult": randomBool});
+//     apiData.encrpyted_test.push(obj_data);
+//         // apiData.users.push({"userId": user});
+//     count++;
+//
+//
+//
+//
+//
+//     fs.writeFileSync("data.json", JSON.stringify(apiData, null, 4));
+//     return apiData;
+// }
+
+
 // create function to encrypt data
 
 // function to call encryption functions from ta
@@ -330,6 +351,58 @@ async function findMatch(userId){
 
 //
 // console.log("hey girl");
+async function TestData(gps_location) {
+    let apiData = {encrypted_test: []};
+
+    let data_array = gps_location.location_data;
+
+
+    // apiData.location_data.push({"lat": lat, "lng": lng, "startTS": startTime, "endTS": endTime, "testResult": randomBool});
+    // apiData.encrpyted_test.push(obj_data);
+    // apiData.users.push({"userId": user});
+
+
+    for (items of data_array) {
+        let {private_buffer, client_pub} = ClientKeys();
+// // get result values from encryption to use signature value for verify
+        try {
+            // console.log("hey try");
+            let {taskPubKey, sig} = await getEncryptionKey(client_pub);
+
+            let derivedKey = deriveKeys(taskPubKey, private_buffer);
+
+            // let totp = await getTotpKey(client_pub, derivedKey);
+
+
+
+
+            // for (items of data_array) {
+            // let chunks = [];
+            // console.log(items.userId);
+            let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
+
+            // chunks.push(items.data);
+            // console.log(JSON.stringify(items.data));
+            let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
+            // console.log(encryptedData);
+            let obj_data = {"Id": encryptedUserId, "data": {"encrypt_data": encryptedData, "key": client_pub }};
+
+            apiData.encrypted_test.push(obj_data);
+            // console.log(apiData.encrypted_test);
+            fs.writeFileSync("test.json", JSON.stringify(apiData, null, 4));
+
+            // }
+        } catch(err) {
+            console.log(err);
+            // Or throw an error
+        }
+        // fs.writeFileSync("test.json", JSON.stringify(apiData, null, 4));
+    }
+    // fs.writeFileSync("test.json", JSON.stringify(apiData, null, 4));
+    // console.log(apiData.encrypted_test);
+
+    // fs.writeFileSync("test.json", JSON.stringify(apiData, null, 4));
+}
 
 
 let data1 = [
@@ -370,7 +443,8 @@ let read = fs.readFileSync('data.json');
 let gps_location = JSON.parse(read);
 // addData(String(arguments[2]), JSON.stringify(arguments[3])).then();
 
-addData(gps_location);
+// addData(gps_location);
+TestData(gps_location);
 // findMatch("user1").then(console.log);
 //
 //

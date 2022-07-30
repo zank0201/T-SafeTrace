@@ -43,10 +43,10 @@ pub fn add_data(
     // }else{
     //     result = 1;
     //     }
-    let (p0, _, _, _) = operation.parameters();
-    let time_stamp = p0.a();
-    let data_len = p0.b();
-    println!("{},{}", time_stamp, data_len);
+    // let (mut p0, _, _, _) = operation.parameters();
+    // let time_stamp = p0.a();
+    // let data_len = p0.b();
+    // println!("{},{}", time_stamp,data_len);
     Ok(0)
 }
 

@@ -50,7 +50,7 @@ pub fn create_raw_object(signing_key: &mut KeyStorage, params: &mut Parameters) 
     let mut p0 = unsafe { params.0.as_memref().unwrap() };
     // let mut p1 = unsafe { params.1.as_memref().unwrap() };
     //
-    delete_object()?;
+    // delete_object()?;
 
 
     signing_key.get_key_object()?;
@@ -214,8 +214,8 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 //start time time stamp
 
-    let mut start_time = Time::new();
-    start_time.system_time();
+    // let mut start_time = Time::new();
+    // start_time.system_time();
     // trace_println!("start time {}", start_time);
     let mut p0 = unsafe { params.0.as_value().unwrap() };
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
@@ -240,6 +240,10 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     //     }
 
     nistp256::verify(sign,user_pub)?;
+
+
+    // trace_println!("end time {}", end_time);
+
 
     let io_key;
     match remove_io_key(user_pub) {
@@ -278,7 +282,8 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     // let mut init_data: [u8; 0] = [0; 0];
     // let mut new_output = read_raw_object().unwrap();
     // trace_println!("we left output buffer {:?}", new_output.len());
-
+    // let mut start_time = Time::new();
+    // start_time.system_time();
     let obj_data_flag =
         DataFlag::ACCESS_WRITE|
             DataFlag::SHARE_WRITE
@@ -336,11 +341,11 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
             // write_to_storage(&encoded_slice)?;
 
 
-            let mut end_time = Time::new();
-            end_time.system_time();
-            // trace_println!("end time {}", end_time);
-
-            let delta_time = get_response_time(start_time, end_time).unwrap();
+            // let mut end_time = Time::new();
+            // end_time.system_time();
+            // // trace_println!("end time {}", end_time);
+            //
+            // let delta_time = get_response_time(start_time, end_time).unwrap();
             // trace_println!("delta time {}", delta_time);
 
 
@@ -354,8 +359,9 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
             // let str_r = u32::from_str_radix(&data_stamp, 32).unwrap();
-            p0.set_a(delta_time);
-            p0.set_b(encrypt_tree.len() as u32);
+            // p0.set_a(delta_time);
+            // p0.set_b(encrypt_tree.len() as u32);
+
 
             Ok(())
         }
