@@ -46,24 +46,8 @@ function parsed_data() {
 // let aug_data = JSON.parse(august);
 //
 // console.log(Object.keys(august).length)
-parsed_data();
-
-function loop_data() {
-    let read = fs.readFileSync('data.json');
-
-    let gps_location = JSON.parse(read);
-    let data_array = gps_location.location_data;
-    let chunklength = Math.max(data_array.length/2, 1);
-    let chunks = [];
-    for (let i = 0; i < 2; i++) {
-        if(chunklength*(i+1)<=data_array.length) {
-            chunks.push(data_array.slice(chunkLength * i, chunkLength * (i + 1)));
-        }
-
-    }
-    //loop
-    // data_array.map((item) => console.log('location:', item.data))
-
-}
-
-// loop_data()
+// parsed_data();
+let read_test = fs.readFileSync("../../../../test.json");
+let data = JSON.parse(read_test);
+let parsed_test = data.encrypted_test;
+fs.writeFileSync("jmeter_data.json", JSON.stringify(parsed_test, null, 4));
