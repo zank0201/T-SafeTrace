@@ -3,31 +3,92 @@ const {totp } = require('otplib/index.js');
 // const notp = require('notp');
 const readline = require("readline")
 const axios = require('axios');
+
 const jaysonBrowserClient = require('jayson/lib/client/browser');
-const JSON_RPC_Server = 'http://127.0.0.1:8080';
-const QRCode = require('qrcode');
+const JSON_RPC_Server = 'http://127.0.0.1:9200';
+const StatsD = require('node-statsd'),
+    client_stats = new StatsD();
 const forge = require('node-forge');
 const buffer = require('buffer');
 const fs = require("fs");
 const EC = require('elliptic').ec;
+const instance = axios.create();
+
 const callServer = function(request, callback) {
+    // console.log(JSON.parse(request))
     let config = {
         headers: {
             'Content-Type': 'application/json',
             'credentials': 'include',
         },
     };
-    axios.post(JSON_RPC_Server, JSON.parse(request), config).then((response) => {
+    // Request interceptor for capturing start time
+
+    instance.interceptors.request.use((config) => {
+        config.metadata = { startTime: new Date()}
+        // return config;
+        // config.headers['request-startTime'] = new Date().getTime();
+
+
+        return config
+    })
+
+// Response interceptor for computing duration
+    instance.interceptors.response.use((response) => {response.config.metadata.endTime = new Date()
+        response.duration = response.config.metadata.endTime - response.config.metadata.startTime
+        return response
+    })
+
+    instance.post(JSON_RPC_Server, JSON.parse(request), config).then((response) => {
         if ('error' in response.data) {
             callback(response.data.error, null);
         } else {
             let text = JSON.stringify(response.data.result);
+
+            // console.log(request);
+            // console.log(response.duration);
+            // let request_json =JSON.parse(request)
+            // console.log(request_json.method)
+            // console.log(response.headers['request-duration'])
+            // httpRequestDurationMicroseconds
+            //     .labels(req.route.path)
+            //     .observe(responseTimeInMs)
+
+            if (response.data.result.type == "AddPersonalData" ) {
+                instance.get('http://localhost:8080/metrics').then((response) =>{
+                    console.log("done")
+                    }
+                ).catch(function(err) {
+                    callback({code: -32000, message: err.message}, null);
+                });
+
+            //     let bytes = response.data.result.addPersonalData.bytesize;
+            //     console.log(response.config.headers['request-startTime'])
+                let join_text =response.config.metadata.startTime + "," + response.duration + "\n";
+                // let file = fs.createWriteStream('log.txt', {
+                //     flags: 'a' // 'a' means appending (old data will be preserved)
+                // })
+                // file.write(join_text);
+
+            }
             callback(null, text);
+
+
         }
     }).catch(function(err) {
         callback({code: -32000, message: err.message}, null);
     });
+
+
+
 };
+
+
+
+// axios.get(JSON_RPC_Server+'/metrics', (req, res) => {
+//     res.set('Content-Type', Prometheus.register.contentType)
+//     res.end(Prometheus.register.metrics())
+// })
 
 const client = new jaysonBrowserClient(callServer, {});
 // generate otp
@@ -119,9 +180,9 @@ function ClientKeys() {
     let ec = new EC("p256");
     let keypair = ec.genKeyPair();
     let publickeys = keypair.getPublic();
-    let private = keypair.getPrivate();
+    let private_key = keypair.getPrivate();
     const client_pub = publickeys.encode('hex');
-    const private_buffer = private.toString('hex');
+    const private_buffer = private_key.toString('hex');
 
     return {private_buffer, client_pub}
 
@@ -236,39 +297,47 @@ async function getEncryptionKey(client_pub) {
  * @param data
  * @returns {Promise<void>}
  */
-async function addData(userId, data) {
+async function addData(gps_location) {
 
-    let {private_buffer, client_pub} = ClientKeys();
+
+
+    let data_array = gps_location.location_data;
+    for (items of data_array) {
+        let {private_buffer, client_pub} = ClientKeys();
 // // get result values from encryption to use signature value for verify
-    try {
-        // console.log("hey try");
-        let {taskPubKey, sig} = await getEncryptionKey(client_pub);
+        try {
+            // console.log("hey try");
+            // console.log(response_ax);
+            let {taskPubKey, sig} = await getEncryptionKey(client_pub);
 
-        let derivedKey = deriveKeys(taskPubKey, private_buffer);
+            let derivedKey = deriveKeys(taskPubKey, private_buffer);
 
-        let totp = await getTotpKey(client_pub, derivedKey);
-
-
+            let totp = await getTotpKey(client_pub, derivedKey);
 
 
-        // for (items of data_array) {
+            // for (items of data_array) {
             // let chunks = [];
             // console.log(items.userId);
-            let encryptedUserId = encrypt(derivedKey, userId);
-
+            let encryptedUserId = encrypt(derivedKey, JSON.stringify(items.userId));
+            // console.log(items.userId);
             // chunks.push(items.data);
             // console.log(JSON.stringify(items.data));
-            let encryptedData = encrypt(derivedKey, data);
+            // console.log("user data", JSON.stringify(items.data));
+            let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
             // console.log(encryptedData);
 
 
-        // await awaitTimeout(6000);
-        const addPersonalDataResult = await new Promise((resolve, reject) => {
+            // client_stats.timing('response_time', 42);
+            await awaitTimeout(4000);
+            const addPersonalDataResult = await new Promise((resolve, reject) => {
 
 
                 // if (totp == true)
-                    // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
-                    // if (api_totp==false) throw "invalid totp";
+                // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
+                // if (api_totp==false) throw "invalid totp";
+
+                // file.write(new Date().getTime())
+                // console.log(new Date().getTime())
                 client.request('addPersonalData', {
                         encryptedUserId: encryptedUserId,
                         encryptedData: encryptedData,
@@ -281,6 +350,7 @@ async function addData(userId, data) {
                             return;
                         }
                         resolve(response);
+                        // console.log(response);
                     })
 
 
@@ -288,6 +358,7 @@ async function addData(userId, data) {
 
             // getTotpKey(client_pub).then(totp => GenerateOtp(derivedKey, totp));
 
+            // console.log(count);
             const {addPersonalData} = addPersonalDataResult;
 
             if (addPersonalData.status == 0) {
@@ -295,14 +366,87 @@ async function addData(userId, data) {
             } else {
                 console.log('Something went wrong. Time to debug...')
             }
-        // }
-        } catch(err) {
-        console.log(err);
-        // Or throw an error
+            // }
+        } catch (err) {
+            console.log(err);
+            // Or throw an error
+        }
     }
-
         }
 
+// async function addData(userId, data) {
+//
+//
+//     // let count =0;
+//     // let data_array = gps_location.location_data;
+//
+//         let {private_buffer, client_pub} = ClientKeys();
+// // // get result values from encryption to use signature value for verify
+//         try {
+//             // console.log("hey try");
+//             let {taskPubKey, sig} = await getEncryptionKey(client_pub);
+//
+//             // count+=1
+//             let derivedKey = deriveKeys(taskPubKey, private_buffer);
+//
+//             let totp = await getTotpKey(client_pub, derivedKey);
+//
+//
+//             // for (items of data_array) {
+//             // let chunks = [];
+//             // console.log(items.userId);
+//             let encryptedUserId = encrypt(derivedKey,userId);
+//             // console.log(items.userId);
+//             // chunks.push(items.data);
+//             // console.log(JSON.stringify(items.data));
+//             // console.log("user data", JSON.stringify(items.data));
+//             let encryptedData = encrypt(derivedKey, data);
+//             // console.log(encryptedData);
+//
+//
+//             client_stats.timing('response_time', 42);
+//             await awaitTimeout(3000);
+//             const addPersonalDataResult = await new Promise((resolve, reject) => {
+//
+//
+//                 // if (totp == true)
+//                 // let api_totp = GenerateOtp(derivedKey, totp_user.toString());
+//                 // if (api_totp==false) throw "invalid totp";
+//                 client.request('addPersonalData', {
+//                         encryptedUserId: encryptedUserId,
+//                         encryptedData: encryptedData,
+//                         userPubKey: client_pub,
+//                         taskSign: sig
+//                     },
+//                     (err, response) => {
+//                         if (err) {
+//                             reject(err);
+//                             return;
+//                         }
+//                         resolve(response);
+//                         // console.log(response);
+//                     })
+//
+//
+//             });
+//
+//             // getTotpKey(client_pub).then(totp => GenerateOtp(derivedKey, totp));
+//
+//             // console.log(count);
+//             const {addPersonalData} = addPersonalDataResult;
+//
+//             if (addPersonalData.status == 0) {
+//                 console.log('Personal data added successfully to the enclave.');
+//             } else {
+//                 console.log('Something went wrong. Time to debug...')
+//             }
+//             // }
+//         } catch (err) {
+//             console.log(err);
+//             // Or throw an error
+//         }
+//     // }
+// }
 async function findMatch(userId){
 
     let {private_buffer, client_pub} = ClientKeys();
@@ -365,6 +509,7 @@ async function TestData(gps_location) {
 // // get result values from encryption to use signature value for verify
         try {
             // console.log("hey try");
+            await awaitTimeout(4000);
             let {taskPubKey, sig} = await getEncryptionKey(client_pub);
 
             let derivedKey = deriveKeys(taskPubKey, private_buffer);
@@ -381,7 +526,8 @@ async function TestData(gps_location) {
 
             // chunks.push(items.data);
             let encryptedData = encrypt(derivedKey, JSON.stringify(items.data));
-            let obj_data = {"Id": encryptedUserId, "data": {"encrypt_data": encryptedData, "key": client_pub, "sign": sig }};
+
+            let obj_data = {"Id": encryptedUserId, "encrypt_data": encryptedData, "key": client_pub, "sign": sig };
 
             apiData.encrypted_test.push(obj_data);
             // console.log(apiData.encrypted_test);
@@ -439,11 +585,12 @@ let data2 = [
 // addData(String(arguments[2]), JSON.stringify(arguments[3])).then();
 
 // addData("User1", JSON.stringify(data1));
-// addData("User2", JSON.stringify(data2));
+// addData("User2", JSON.stringify(data2)).then(value => {console.log(value)});
 
 let data = fs.readFileSync('data.json');
 let gps_location = JSON.parse(data);
-TestData(gps_location);
+
+addData(gps_location).then(console.log);
 // findMatch("User1").then(console.log);
 //
 //

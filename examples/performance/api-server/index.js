@@ -1,24 +1,32 @@
 #!/usr/bin/env node
-
+const client = require('prom-client');
 const zmq = require('zeromq/v5-compat');
 const cors = require('cors');
 const jayson = require("jayson");
 const crypto = require('crypto');
-const connect = require('connect');
+// const connect = require('connect');
+const express = require('express');
+// const startServer = require('./node-prometheus-grafana/node-application-monitoring-app');
 const bodyParser = require('body-parser');
+const path = require('path');
+const fs = require('fs');
+const app = express();
 
 
 
-const app = connect();
 
-const ENCLAVE_URI = 'tcp://localhost:5552';
+// const collectDefaultMetrics = client.collectDefaultMetrics;
+// collectDefaultMetrics();
+const ENCLAVE_URI = 'tcp://10.42.0.172:5552';
 const _INVALID_PARAM = -32602;
 var c = [];
 // const socket = new zmq.Request
+// var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 const socket = zmq.socket('req');
 socket.sendHighWaterMark = 1000;
 socket.sendTimeout = 5000;
 socket.connect(ENCLAVE_URI);
+// const register = new client.Registry();
 
 socket.on('message', msg => {
     console.log('Message received');
@@ -54,6 +62,7 @@ const server = new jayson.Server ({
 
         const id = generateId()
         c[id] = callback;
+        console.log(args);
         if(args.userPubKey && args.userPubKey.length == 130) {
             try {
 
@@ -121,6 +130,7 @@ const server = new jayson.Server ({
 
         const id = generateId()
         c[id] = callback;
+        console.log(args);
         if(args.encryptedUserId && args.userPubKey && args.encryptedData
         && args.taskSign) {
             try {
@@ -183,30 +193,17 @@ const server = new jayson.Server ({
 
 
 });
-// async function run() {
-//     console.log("Connecting to TA");
-//
-//
-//
-//     const id = generateId()
-//     console.log(id)
-//     console.log("Producer bound to port 5552")
-//
-//
-//     for await (const [msg] of sock) {
-//         console.log('Received ' + ': [' + msg.toString() + ']');
-//         // await sock.send('World');
-//         // Do some 'work'
-//         // const id = generateId()
-//         // console.log(id)
-//     }
-// }
-//
-// run();
-// const server = jayson.server({
-// })
+
+
+
+// dash.attach();
+// app.use(startServer);
 app.use(cors({methods: ['POST']}));
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(bodyParser.urlencoded({ limit: "20mb", extended: true}));
+// app.use();
 app.use(server.middleware());
-app.listen(8080);
+// startServer()
+app.listen(9200, () => {
+    console.log('we are listening to port 9001')
+})

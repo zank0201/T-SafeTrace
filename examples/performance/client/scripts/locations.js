@@ -4,12 +4,11 @@ function parsed_data() {
 
     let read = fs.readFileSync('2019_AUGUST.json');
     let read_dec = fs.readFileSync('2019_DECEMBER.json');
-    let read_feb = fs.readFileSync('2019_FEBRUARY.json');
-    let read_jan = fs.readFileSync('2019_JANUARY.json');
+    // let read_feb = fs.readFileSync('2019_FEBRUARY.json');
+    // let read_jan = fs.readFileSync('2019_JANUARY.json');
     // let data = JSON.parse(read);
 
-    let array = [JSON.parse(read), JSON.parse(read_dec), JSON.parse(read_feb),
-    JSON.parse(read_jan)];
+    let array = [JSON.parse(read), JSON.parse(read_dec)];
     let count = 1;
     for (i of array) {
 
@@ -25,7 +24,7 @@ function parsed_data() {
 
                 let obj_data = {
                     "userId": user,
-                    "data": {"lat": lat, "lng": lng, "startTS": startTime, "endTS": endTime, "testResult": randomBool}
+                    "data": [{"lat": lat, "lng": lng, "startTS": startTime, "endTS": endTime, "testResult": randomBool}]
                 }
 
                 // apiData.location_data.push({"lat": lat, "lng": lng, "startTS": startTime, "endTS": endTime, "testResult": randomBool});
@@ -46,7 +45,7 @@ function parsed_data() {
 // let aug_data = JSON.parse(august);
 //
 // console.log(Object.keys(august).length)
-// parsed_data();
+parsed_data();
 let read_test = fs.readFileSync("../../../../test.json");
 let data = JSON.parse(read_test);
 let parsed_test = data.encrypted_test;

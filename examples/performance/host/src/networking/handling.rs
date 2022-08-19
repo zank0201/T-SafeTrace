@@ -40,27 +40,35 @@ pub fn new_task_encryption_key(session: &mut Session, user_pubkey: &str) -> Resp
 pub fn add_personal_data(input: IpcInputData, session: &mut Session) -> ResponseResult {
     // this needs to be decrypted
 
+    // println!("input user data {:?}", &input.encrypted_data);
     let encrypted_userid = input.encrypted_userid.from_hex()?;
     let encrypted_data = input.encrypted_data.from_hex()?;
     let key = input.user_pub_key;
     let sig = input.user_sig.from_hex()?;
 
+    // println!("encrypted user id {:?}", &encrypted_userid);
+    // println!("encrypted user data {:?}", &encrypted_data);
+    // println!("encrypted user key {:?}", &key);
+    // println!("encrypted user sign {:?}", &sig);
 
     let mut useridlen = &encrypted_userid[..encrypted_userid.len()-28];
     let mut data_len = &encrypted_data[..encrypted_data.len()-28];
 
-    let mut id_ciph = vec![0x00u8; useridlen.len()];
-    let mut data_ciph = vec![0x00u8; data_len.len()];
 
-    let user_stat = authenticated::add_data(&mut *session,&encrypted_userid, &key, &encrypted_data, &sig).unwrap();
+
+
+
+    // println!(" id: {:?}", &useridlen);
+    // println!("data id {:?}", data_len.len());
+    let (user_stat,array_size) = authenticated::add_data(&mut *session,&encrypted_userid, &key, &encrypted_data, &sig).unwrap();
     // let data_stat = authenticated::decrypt(&mut *session, 1, &encrypted_data, &key, &mut data_ciph).unwrap();
     let result;
     if (user_stat)==0 {
-        result = IpcResults::AddPersonalData { status: Status::Passed };
+        result = IpcResults::AddPersonalData { status: Status::Passed, bytesize: array_size.to_string()
+        };
     } else {
-            result =IpcResults::AddPersonalData { status: Status::Failed };
+            result =IpcResults::AddPersonalData { status: Status::Failed, bytesize: array_size.to_string() };
         }
-
 
 
     // let result = IpcResults::AddPersonalData { status: Status::Passed };

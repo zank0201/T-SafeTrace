@@ -217,17 +217,22 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     // let mut start_time = Time::new();
     // start_time.system_time();
     // trace_println!("start time {}", start_time);
-    let mut p0 = unsafe { params.0.as_value().unwrap() };
+    // let mut p0 = unsafe { params.0.as_value().unwrap() };
+    let mut p0 = unsafe { params.0.as_memref().unwrap() };
     let mut p1 = unsafe { params.1.as_memref().unwrap() };
     let mut p2 = unsafe { params.2.as_memref().unwrap() };
-    let mut p3 = unsafe { params.3.as_memref().unwrap() };
-    let mut user_id = vec![0; p1.buffer().len() as usize];
+    let mut p3 = unsafe { params.3.as_value().unwrap() };
+    let mut user_id = vec![0; p0.buffer().len() as usize];
 
-    let mut buffer = p2.buffer();
-    user_id.copy_from_slice(p1.buffer());
+    let mut buffer = p1.buffer();
+    user_id.copy_from_slice(p0.buffer());
 
+    // let mut user_pub = vec![0;p1.buffer().len() as usize];
+    // user_pub.copy_from_slice(p1.buffer());
     let (mut user_pub, mut sign) = buffer.split_at_mut(buffer.len()/2);
 
+
+    // trace_println!("user pub key {:?}", &user_pub);
     // user_pub.clone_from_slice(&buffer[..64]);
     // sign.clone_from_slice(&buffer[64..]);
 
@@ -246,7 +251,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
     let io_key;
-    match remove_io_key(user_pub) {
+    match remove_io_key(&mut user_pub) {
         Ok(v) => io_key = v,
         Err(e) => return Err(e),
     };
@@ -262,23 +267,23 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
     // println!("from tee");
     // let mut decrypted_obj_id = find_match_optee(&mut obj_id, key).unwrap();
 
-    let mut data_buffer = vec![0;p3.buffer().len() as usize];
-    data_buffer.copy_from_slice(p3.buffer());
+    let mut data_buffer = vec![0; p2.buffer().len() as usize];
+    data_buffer.copy_from_slice(p2.buffer());
 
 
 
+    // trace_println!("user_pub key from func {:?}",&io_key);
     let decrypted_user_id = Cipher::decrypt(&mut user_id, &io_key).unwrap();
 
-    trace_println!("exit user id");
+
     let decrypted_data = Cipher::decrypt(&mut data_buffer, &io_key).unwrap();
     // let (decrypted_user_id, decrypted_data) = decrypt_new_user(&mut user_id, &mut data_buffer, &key).unwrap();
 
-    trace_println!("exit data");
     let string_id = str::from_utf8(&decrypted_user_id).unwrap();
+
 
     //
     // let string_data = String::from_utf8(decrypted_data);
-
     let mut input_data = serde_json::from_slice(&decrypted_data).unwrap();
 
     // let mut init_data: [u8; 0] = [0; 0];
@@ -312,8 +317,9 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
             let obj_info = object.info()?;
 
             let mut storage_buffer = vec![0u8; obj_info.data_size() as usize];
-
+            // trace_println!("storage_buffer {}", storage_buffer.len());
             let read_bytes = object.read(&mut storage_buffer).unwrap();
+
 
 
             // trace_println!("read bytes {}", read_bytes);
@@ -324,6 +330,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
 
             let mut tmp = Cipher::decrypt(&mut storage_buffer, &storage_key.access_field() ).unwrap();
+
 
             // trace_println!("storage data {}", storage_buffer.len());
             let mut data_bytes: BTreeMap<String, Vec<Geolocation>> = serde_json::from_slice(&tmp).unwrap();
@@ -362,7 +369,7 @@ pub fn add_data_object(storage_key: &mut KeyStorage, params: &mut Parameters) ->
 
             // let str_r = u32::from_str_radix(&data_stamp, 32).unwrap();
             // p0.set_a(delta_time);
-            // p0.set_b(encrypt_tree.len() as u32);
+            p3.set_a(encrypt_tree.len() as u32);
 
 
             Ok(())

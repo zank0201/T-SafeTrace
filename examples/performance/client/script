@@ -1,3 +1,12 @@
-curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "id":1, "method":"getEnclaveReport", "params": {}}' http://127.0.0.1:8080
+curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "id":1, "method":"getEnclaveReport", "params": {}}' http://127.0.0.1:3000
 
-curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "id":1, "method":"addPersonalData", "params": {"encryptedUserId":"15806c56ed8fb37a9a45c8c3efa227a98a406c5787bf3ff90f0c89fde8ad3d6fdd", "encryptedData": "85d6f1e75cd29d761e291f9c8fd3e8dc5ac289df327960a39938a0934bcaee41f7b17c61ec450b7a8fc01474e9495d12d6d07754d01217c88774b678c03032e3085155ba65f9cf9617de36a538c30c6664e05c3f07f812a3cf10b23ca90fc765912f82bfddd864ba4d4f7e6ab41c11f6d43006b2aee150ddef72215f2baeadd1957fdeac9d2f582e779e79cabc604a3ba50f9c870952239ee4a2437d54952f891090a677b3c38972a2982a739bd43c911c14f67c80cd53b34001285a5091c4525f1d68cef4d89ebb805181a3a11d8c52e57ba4e802e7", "userPubKey": "cc955077ff7aeb67e544bb0dfad0a5ac1d3117f4115c528d38da9c2337cb033ec08f1d12a580d2ccfed02144e70d961c72e28e92ef48b9056c08137918c5ab2d"}}' http://127.0.0.1:8080
+curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "id":1, "method":"addPersonalData", "params": {"encryptedUserId":"15806c56ed8fb37a9a45c8c3efa227a98a406c5787bf3ff90f0c89fde8ad3d6fdd", "encryptedData": "85d6f1e75cd29d761e291f9c8fd3e8dc5ac289df327960a39938a0934bcaee41f7b17c61ec450b7a8fc01474e9495d12d6d07754d01217c88774b678c03032e3085155ba65f9cf9617de36a538c30c6664e05c3f07f812a3cf10b23ca90fc765912f82bfddd864ba4d4f7e6ab41c11f6d43006b2aee150ddef72215f2baeadd1957fdeac9d2f582e779e79cabc604a3ba50f9c870952239ee4a2437d54952f891090a677b3c38972a2982a739bd43c911c14f67c80cd53b34001285a5091c4525f1d68cef4d89ebb805181a3a11d8c52e57ba4e802e7", "userPubKey": "cc955077ff7aeb67e544bb0dfad0a5ac1d3117f4115c528d38da9c2337cb033ec08f1d12a580d2ccfed02144e70d961c72e28e92ef48b9056c08137918c5ab2d", "taskSign": "60df3af3f6336a70913070a1d5df256814e9eb37bf880d98fc20ed70c7ae74bdbe2526234b6758b43d6dccb43040e5e4aca7f64f4e93fdc07f07fdefcfe3e552"}}' http://127.0.0.1:3000
+
+
+curl -H "Content-Type: application/json" -d '{"jsonrpc": "2.0", "id":1, "method":"newTaskEncryptionKey", "params": {"userPubKey": "'"$abench"'"}}' http://127.0.0.1:3000
+
+
+echo "deb [trusted=yes] http://0.0.0.0:8000/stm32mp1 /" > /etc/apt/sources.list.d/my_custom.list
+echo "deb [trusted=yes] http://0.0.0.0:8000/all /" >> /etc/apt/sources.list.d/my_custom.list
+echo "deb [trusted=yes] http://0.0.0.0:8000/cortexa7t2hf-neon-vfpv4 /" >> /etc/apt/sources.list.d/my_custom.list
+echo "deb [trusted=yes] http://0.0.0.0:8000/cortexa7hf-neon-vfpv4 /"  >> /etc/apt/sources.list.d/my_custom.list

@@ -14,6 +14,9 @@ pub enum Status {
     Failed = -1,
     Passed = 0,
 }
+// pub enum Bytesize {
+//     bytes = String
+// }
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Keypair {
     pub pubkeyX: String,
@@ -57,6 +60,7 @@ pub struct IpcStatusResult {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub key: Option<i64>,
     pub status: Status,
+    pub bytesize: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -87,7 +91,7 @@ pub enum IpcResults {
     EnclaveReport { #[serde(rename = "signingKey")] signing_key: String},
     #[serde(rename = "result")]
     DHKey { taskPubKey: String, sig: String },
-    AddPersonalData { status: Status },
+    AddPersonalData { status: Status, bytesize: String },
     #[serde(rename = "result")]
     Totp {token: String},
     FindMatch { status: Status, #[serde(skip_serializing_if = "String::is_empty")] encryptedOutput: String },

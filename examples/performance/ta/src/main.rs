@@ -94,8 +94,8 @@ fn invoke_command(_sess_ctx: &mut KeyStorage, cmd_id: u32, _params: &mut Paramet
 
 // TA configurations
 const TA_FLAGS: u32 = 0;
-const TA_DATA_SIZE: u32 = 2*32*32*1024;
-const TA_STACK_SIZE: u32 = 10*4*1024;
+const TA_DATA_SIZE: u32 = 6*10*32*1024;
+const TA_STACK_SIZE: u32 = 6*1024;
 const TA_VERSION: &[u8] = b"0.1\0";
 const TA_DESCRIPTION: &[u8] = b"Track and trace.\0";
 const EXT_PROP_VALUE_1: &[u8] = b"Thesis TA\0";

@@ -17,7 +17,7 @@ pub fn add_data(
     key: &str,
     data: &[u8],
     sig: &[u8]
-) -> optee_teec::Result<(u32)> {
+) -> optee_teec::Result<(u32,u32)> {
     // let mut buffer = vec![0u8;data.len() as usize];
     let mut user_pub = &key[2..].from_hex().unwrap();
 
@@ -26,12 +26,13 @@ pub fn add_data(
     tmp_sig.copy_from_slice(&user_pub);
     tmp_sig.extend(sig);
     // user_pub.extend(sig);
-    let p0 = ParamValue::new(0,0, ParamType::ValueOutput);
-    let p1 = ParamTmpRef::new_input(user_id);
+    // let p0 = ParamValue::new(0,0, ParamType::ValueOutput);
+    let p0 = ParamTmpRef::new_input(user_id);
 /// concatenate user id and data so we have one more space for
 /// time and read data
-    let p2 = ParamTmpRef::new_input(&tmp_sig);
-    let p3 = ParamTmpRef::new_input(data);
+    let p1 = ParamTmpRef::new_input(&tmp_sig);
+    let p2 = ParamTmpRef::new_input(data);
+    let p3 = ParamValue::new(0,0, ParamType::ValueOutput);
     let mut operation = Operation::new(0, p0, p1, p2, p3);
 
     session.invoke_command(Command::Prepare as u32, &mut operation)?;
@@ -43,11 +44,11 @@ pub fn add_data(
     // }else{
     //     result = 1;
     //     }
-    // let (mut p0, _, _, _) = operation.parameters();
+    let (_, _, _, p3) = operation.parameters();
     // let time_stamp = p0.a();
-    // let data_len = p0.b();
+    let data_len = p3.a();
     // println!("{},{}", time_stamp,data_len);
-    Ok(0)
+    Ok((0, data_len))
 }
 
 pub fn find_match_optee(session: &mut Session,

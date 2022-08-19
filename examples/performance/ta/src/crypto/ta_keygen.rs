@@ -75,6 +75,7 @@ pub fn generate_key(user_pub: &[u8], private_value: &[u8]) -> Result<()> {
             let derived_val = derived_array(&derived_res);
             let pub_array = user_pub.to_hex();
             // trace_println!("io string {:?}", &user_string);
+
             DH_KEYS.lock_expect("DH_KEYS").insert(PubKey(pub_array.into()), derived_val);
 
             // map.insert_keys(String::from_utf8(derived_res), new_array, derived_res);

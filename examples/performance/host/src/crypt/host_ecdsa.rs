@@ -32,6 +32,7 @@ pub fn ecdsa_keypair(session: &mut Session, user_pubkey: &str) -> optee_teec::Re
     // client public key used for derived key
     let mut user_pub = &user_pubkey[2..].from_hex().unwrap();
     // let user_id = nanoid!(10);
+
     let mut signature_buffer = [0u8; 64];
 
     // let p1 = ParamTmpRef::new_input(user_id.as_bytes());
