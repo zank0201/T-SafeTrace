@@ -55,7 +55,7 @@ const callServer = function(request, callback) {
             //     .observe(responseTimeInMs)
 
             if (response.data.result.type == "AddPersonalData" ) {
-                instance.get('http://localhost:8080/metrics').then((response) =>{
+                instance.get('http://localhost:8080/api').then((response) =>{
                     console.log("done")
                     }
                 ).catch(function(err) {

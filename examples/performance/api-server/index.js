@@ -11,10 +11,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const fs = require('fs');
 const app = express();
-
-
-
-
+//
+// const register = new client.Registry();
+// const numberUsers = new client.Counter({
+//     name: "number_users",
+//     help: "number of users added",
+//     labelNames: ['code'],
+// });
+// register.registerMetric(numberUsers);
 // const collectDefaultMetrics = client.collectDefaultMetrics;
 // collectDefaultMetrics();
 const ENCLAVE_URI = 'tcp://10.42.0.172:5552';
@@ -198,10 +202,11 @@ const server = new jayson.Server ({
 
 // dash.attach();
 // app.use(startServer);
+
 app.use(cors({methods: ['POST']}));
 app.use(bodyParser.json({ limit: "20mb" }));
 app.use(bodyParser.urlencoded({ limit: "20mb", extended: true}));
-// app.use();
+
 app.use(server.middleware());
 // startServer()
 app.listen(9200, () => {
