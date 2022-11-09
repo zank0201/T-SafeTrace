@@ -2,6 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/examples/performance/api-server/node-prometheus-grafana" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/optee/build" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/optee/build/optee_benchmark" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/optee/optee_client" vcs="Git" />

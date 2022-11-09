@@ -3,7 +3,7 @@
 Teaclave TrustZone SDK (Rust OP-TEE TrustZone SDK) provides abilities to build
 safe TrustZone applications in Rust. The SDK is based on the
 [OP-TEE](https://www.op-tee.org/) project which follows
-[GlobalPlatform](https://globalplatform.org/) TEE specifications and provides
+[GlobalPlatform](https://globaglplatform.org/) TEE specifications and provides
 ergonomic APIs. In addition, it enables capability to write TrustZone
 applications with Rust's standard library and many third-party libraries (i.e.,
 crates). Teaclave TrustZone SDK is a sub-project of [Apache Teaclave (incubating)](https://teaclave.apache.org/).
